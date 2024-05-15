@@ -39,9 +39,10 @@ env:
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: hh_avr           # set this to the name of the container in the
                                                # containerDefinitions section of your task 
-  CONTAINER_NAME_CLIENT: client
-  CONTAINER_NAME_SERVER: server
-
+  CONTAINER_NAME_CLIENT: c_client
+  CONTAINER_NAME_SERVER: c_server
+  IMAGE_SERVER_NAME: img_server
+  IMAGE_CLIENT_NAME: img_client
 
   
 
@@ -74,8 +75,8 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
-	IMAGE_CLIENT: client 
-        IMAGE_SERVER: server 
+	IMAGE_CLIENT: ${{ env.IMAGE_CLIENT_NAME }} 
+        IMAGE_SERVER: ${{ env.IMAGE_SERVER_NAME }} 
       run: |
         # Build a docker container and
         # push it to ECR so that it can
