@@ -1,3 +1,5 @@
+let Post = require('../models/post');
+
 exports.getPosts = (req, res, next) => {
   // return array of existing posts
   Post.find().then(foundPosts => {

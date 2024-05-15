@@ -2,6 +2,7 @@
 const express = require('express');
 // import the logic controller
 const feedController = require('../controllers/feed');
+let Post = require('../models/post');
 // create a router
 const router = express.Router();
 // define your routes

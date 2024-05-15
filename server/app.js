@@ -2,6 +2,9 @@
 const express = require('express');
 // import mangoose
 const mongoose = require('mongoose');
+
+const Post = require('./models/post'); // Define the User model
+
 // import the feed routes
 const feedRoutes = require('./routes/feed');
 // create the express app
