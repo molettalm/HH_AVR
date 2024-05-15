@@ -38,7 +38,11 @@ env:
   ECS_TASK_DEFINITION: task-definition.json # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: hh_avr           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
+                                               # containerDefinitions section of your task 
+definition
+
+  CONTAINER_NAME_CLIENT: client
+  CONTAINER_NAME_SERVER: server
 
 permissions:
   contents: read
@@ -69,26 +73,40 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
+	IMAGE_CLIENT: client 
+        IMAGE_SERVER: server 
       run: |
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+	docker compose -p $IMAGE_TAG create
+	docker tag $IMAGE_CLIENT:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_CLIENT
+	docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_CLIENT
+	echo "imageclient=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_CLIENT" >> $GITHUB_OUTPUT
+ 	docker tag $IMAGE_SERVER:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SERVER
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SERVER
+        echo "imageserver=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SERVER" >> $GITHUB_OUTPUT
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
+    - name: Fill in the new client image ID in the Amazon ECS task definition
+      id: task-def-client
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+        container-name: ${{ env.CONTAINER_NAME_CLIENT }}
+        image: ${{ steps.build-image.outputs.imageclient }}
+
+    - name: Fill in the new server image ID in the Amazon ECS task definition
+      id: task-def-server
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-client.outputs.task-definition}}
+        container-name: ${{ env.CONTAINER_NAME_SERVER }}
+        image: ${{ steps.build-image.outputs.imageserver }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{ steps.task-def-server.outputs.task-definition }}
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
