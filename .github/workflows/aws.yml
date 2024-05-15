@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  AWS_REGION: us-west-1                     # Set this to your preferred AWS region
+  AWS_REGION: us-east-1                     # Set this to your preferred AWS region
   ECR_REPOSITORY: hh_avr                    # Set this to your Amazon ECR repository name
   ECS_SERVICE: cluster_hh_avr               # Set this to your Amazon ECS service name
   ECS_CLUSTER: cluster_hh_avr               # Set this to your Amazon ECS cluster name
