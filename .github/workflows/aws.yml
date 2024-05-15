@@ -41,7 +41,7 @@ env:
                                                # containerDefinitions section of your task 
   CONTAINER_NAME_CLIENT: client
   CONTAINER_NAME_SERVER: server
-definition
+
 
   
 
