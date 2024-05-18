@@ -25,5 +25,5 @@ jobs:
           cd terraform
           terraform fmt
           terraform init -lock=false
-          terraform apply  -destroy -lock=false --auto-approve=true
+          terraform apply  -destroy -target aws_lb_listener.listener -target aws_ecs_service.app_service -target aws_lb_target_group.target_group -target aws_security_group.load_balancer_security_group -target aws_default_subnet.default_subnet_a -target aws_default_subnet.default_subnet_b -target aws_alb.application_load_balancer -target aws_ecs_cluster.my_cluster -target aws_default_vpc.default_vpc -target aws_ecs_task_definition.app_task -lock=false --auto-approve=true
 
