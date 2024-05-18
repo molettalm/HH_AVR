@@ -15,7 +15,7 @@ class AddMedicamentos extends Component {
 			username: '',
 			medicine_name: '',
 			period: 0,
-			date_time: new Date()
+			first_intake: new Date()
 		};
 	}
 
@@ -33,13 +33,13 @@ class AddMedicamentos extends Component {
 
 	onChangePeriod = (p) => {
 		this.setState({
-			period: p.target.value
+			period: parseInt(p.target.value)
 		});
 	};
 
 	onChangeDate = (datetime) => {
 		this.setState({
-			date_time: datetime
+			first_intake: datetime.target.value
 		});
 	};
 
@@ -48,14 +48,18 @@ class AddMedicamentos extends Component {
 		const medicine = {
 			username: this.state.username,
 			medicine_name: this.state.medicine_name,
-			period: this.state.period,
-			first_intake: this.state.date_time
+			period: parseInt(this.state.period),
+			first_intake: this.state.first_intake
 		}
 
-		console.log(medicine);
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(medicine)
+		};
+		fetch('http://localhost:3000/medicines/add', requestOptions)
 
-		axios.post('http://localhost:3000/medicines/add')
-			.then(res => console.log(res.data));
+		setTimeout(function(){window.location.reload();},100);
 		
 	}
 
