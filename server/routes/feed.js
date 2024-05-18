@@ -1,4 +1,4 @@
-// import express
+/// import express
 const express = require('express');
 // import the logic controller
 const feedController = require('../controllers/feed');
