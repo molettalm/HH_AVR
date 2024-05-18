@@ -1,64 +1,44 @@
 import {
 	HiOutlineViewGrid,
-	HiOutlineCube,
-	HiOutlineShoppingCart,
-	HiOutlineUsers,
-	HiOutlineDocumentText,
-	HiOutlineAnnotation,
+	HiOutlinePlusCircle,
+	HiOutlineFire,
+	HiOutlineBeaker,
 	HiOutlineQuestionMarkCircle,
 	HiOutlineCog
 } from 'react-icons/hi'
 
-export const DASHBOARD_SIDEBAR_LINKS = [
+export const SIDEBAR_LINKS = [
 	{
-		key: 'dashboard',
-		label: 'Dashboard',
+		key: 'resumo',
+		label: 'Resumo',
 		path: '/',
 		icon: <HiOutlineViewGrid />
 	},
 	{
-		key: 'products',
-		label: 'Products',
-		path: '/products',
-		icon: <HiOutlineCube />
+		key: 'metricas',
+		label: 'Métricas Diárias',
+		path: '/metricas',
+		icon: <HiOutlinePlusCircle />
 	},
 	{
-		key: 'orders',
-		label: 'Orders',
-		path: '/orders',
-		icon: <HiOutlineShoppingCart />
+		key: 'exercicios',
+		label: 'Exercícios',
+		path: '/exercicios',
+		icon: <HiOutlineFire />
 	},
 	{
-		key: 'customers',
-		label: 'Customers',
-		path: '/customers',
-		icon: <HiOutlineUsers />
-	},
-	{
-		key: 'transactions',
-		label: 'Transactions',
-		path: '/transactions',
-		icon: <HiOutlineDocumentText />
-	},
-	{
-		key: 'messages',
-		label: 'Messages',
-		path: '/messages',
-		icon: <HiOutlineAnnotation />
+		key: 'medicamentos',
+		label: 'Medicamentos',
+		path: '/medicamentos',
+		icon: <HiOutlineBeaker />
 	}
 ]
 
-export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
+export const SIDEBAR_BOTTOM_LINKS = [
 	{
-		key: 'settings',
-		label: 'Settings',
-		path: '/settings',
+		key: 'congiguracoes',
+		label: 'Configurações',
+		path: '/congiguracoes',
 		icon: <HiOutlineCog />
-	},
-	{
-		key: 'support',
-		label: 'Help & Support',
-		path: '/support',
-		icon: <HiOutlineQuestionMarkCircle />
 	}
 ]
