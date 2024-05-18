@@ -41,6 +41,10 @@ resource "aws_default_vpc" "default_vpc" {
 resource "aws_iam_role" "ecsTaskExecutionRole" {
   name               = "ecsTaskExecutionRole"
   assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
+
+  lifecycle {
+   prevent_destroy = true
+ }
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -52,10 +56,6 @@ data "aws_iam_policy_document" "assume_role_policy" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
-
-   lifecycle {
-   prevent_destroy = true
- }
 }
 
 
