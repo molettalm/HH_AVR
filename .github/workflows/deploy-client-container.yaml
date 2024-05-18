@@ -15,7 +15,6 @@ jobs:
   deployclientcontainer:
     
     name: Deploy client container
-    needs: deployinfra
     runs-on: ubuntu-latest
 
    
