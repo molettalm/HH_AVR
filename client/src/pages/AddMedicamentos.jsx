@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class AddMedicamentos extends Component {
 
@@ -16,12 +17,6 @@ class AddMedicamentos extends Component {
 			period: 0,
 			date_time: new Date()
 		};
-	}
-
-	componentDidMount(){
-		this.setState({
-			username: "FlavioNeto"
-		})
 	}
 
 	onChangeUserName = (un) => {
@@ -54,12 +49,14 @@ class AddMedicamentos extends Component {
 			username: this.state.username,
 			medicine_name: this.state.medicine_name,
 			period: this.state.period,
-			date_time: this.state.date_time
+			first_intake: this.state.date_time
 		}
 
 		console.log(medicine);
 
-		window.location = '/medicamentos';
+		axios.post('http://localhost:3000/medicines/add')
+			.then(res => console.log(res.data));
+		
 	}
 
 	render() {
@@ -70,7 +67,7 @@ class AddMedicamentos extends Component {
 						<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Usuário</label>
 						<input type="text" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="FlavioNeto" required 
 						onChange={this.onChangeUserName}/>
-						<p id="username" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Por favor insira seu usuário!</p>
+						<p id="username" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Por favor insira seu batata!</p>
 					</div>
 					<div>
 						<label for="medicine_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome do Remédio</label>
@@ -79,7 +76,7 @@ class AddMedicamentos extends Component {
 					</div>
 					<div>
 						<label for="period" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Período de Ingestão</label>
-						<select name="pedriod" id="period-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required onChange={this.onChangePeriod}>
+						<select id="period-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required onChange={this.onChangePeriod}>
 							<option value="" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">--Por favor escolha uma opção--</option>
 							<option value="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">2 Horas</option>
 							<option value="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">4 Horas</option>

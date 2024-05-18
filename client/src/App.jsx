@@ -19,6 +19,7 @@ function App() {
                     <Route path="configuracoes" element={<Configuracoes />} />
                 </Route>
                 <Route path="/register" element={<Register />} />
+                <Route path="/medicamentos" element={<AddMedicamentos />} />
             </Routes>
         </Router>
     )
