@@ -11,6 +11,7 @@ RUN yarn install
 # Copy source files
 COPY . .
 
+RUN npm install flowbite
 # Build the React app
 RUN yarn build
 
