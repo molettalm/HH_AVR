@@ -1,4 +1,4 @@
-name: Infra deployment workflow
+name: Client - Deploy Container
 
 on:
   workflow_dispatch:
