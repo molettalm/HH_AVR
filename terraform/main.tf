@@ -24,6 +24,9 @@ provider "aws" {
 
 resource "aws_ecr_repository" "app_ecr_repo" {
   name = "hh-repo"
+  lifecycle {
+   prevent_destroy = true
+ }
 }
 
 resource "aws_ecs_cluster" "my_cluster" {
@@ -49,12 +52,20 @@ data "aws_iam_policy_document" "assume_role_policy" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
+
+   lifecycle {
+   prevent_destroy = true
+ }
 }
 
 
 resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
   role       = "${aws_iam_role.ecsTaskExecutionRole.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+
+   lifecycle {
+   prevent_destroy = true
+ }
 }
 
 
@@ -88,11 +99,18 @@ resource "aws_ecs_task_definition" "app_task" {
 resource "aws_default_subnet" "default_subnet_a" {
   # Use your own region here but reference to subnet 1a
   availability_zone = "us-east-1a"
+
+  depends_on = [
+    aws_default_vpc.default_vpc
+  ]
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
   # Use your own region here but reference to subnet 1b
   availability_zone = "us-east-1b"
+  depends_on = [
+    aws_default_vpc.default_vpc
+  ]
 }
 
 resource "aws_alb" "application_load_balancer" {
@@ -176,6 +194,10 @@ resource "aws_security_group" "service_security_group" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+   lifecycle {
+   prevent_destroy = true
+ }
 }
 
 #Log the load balancer app url
