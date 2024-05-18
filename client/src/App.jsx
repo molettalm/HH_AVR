@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, HashRouter } from 'react-router-dom'
 import Layout from './components/shared/Layout'
 import Register from './pages/Register'
 import Exercicios from './pages/Exercicios'
@@ -7,9 +7,10 @@ import AddMedicamentos from './pages/AddMedicamentos'
 import Metricas from './pages/Metricas'
 import Configuracoes from './pages/Configuracoes'
 
+
 function App() {
     return (
-        <Router>
+        <HashRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Resumo />} />
@@ -20,7 +21,7 @@ function App() {
                 </Route>
                 <Route path="/register" element={<Register />} />
             </Routes>
-        </Router>
+        </HashRouter>
     )
 }
 
