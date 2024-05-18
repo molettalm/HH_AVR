@@ -198,9 +198,6 @@ resource "aws_security_group" "service_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-   lifecycle {
-   prevent_destroy = true
- }
 }
 
 #Log the load balancer app url
