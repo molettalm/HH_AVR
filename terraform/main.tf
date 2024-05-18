@@ -139,6 +139,9 @@ resource "aws_security_group" "load_balancer_security_group" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  depends_on = [
+    aws_default_vpc.default_vpc
+  ]
 }
 
 resource "aws_lb_target_group" "target_group" {
