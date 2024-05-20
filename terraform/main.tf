@@ -71,26 +71,36 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
 
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "hh-family-task" # Name your task
-  container_definitions    = <<DEFINITION
-  [
+  container_definitions = jsonencode([
     {
-      "name": "hh-client",
-      "image": "${aws_ecr_repository.app_ecr_repo.repository_url}:client",
-      "essential": true,
-      "portMappings": [
+      name      = "hh-client"
+      image     = "${aws_ecr_repository.app_ecr_repo.repository_url}:client"
+      cpu       = 10
+      memory    = 512
+      essential = true
+      portMappings = [
         {
-          "containerPort": 80
+          containerPort = 80
+          hostPort      = 80
         }
-      ],
-      "memory": 512,
-      "cpu": 256
+      ]
+    },
+    {
+      name      = "hh-server"
+      image     = "${aws_ecr_repository.app_ecr_repo.repository_url}:server"
+      cpu       = 10
+      memory    = 256
+      essential = true
+      portMappings = [
+        {
+          containerPort = 3000
+          hostPort      = 3000
+        }
+      ]
     }
-  ]
-  DEFINITION
+  ])
   requires_compatibilities = ["FARGATE"] # use Fargate as the lauch type
   network_mode             = "awsvpc"    # add the awsvpc network mode as this is required for Fargate
-  memory                   = 512         # Specify the memory the container requires
-  cpu                      = 256         # Specify the CPU the container requires
   execution_role_arn       = "${aws_iam_role.ecsTaskExecutionRole.arn}"
 }
 
