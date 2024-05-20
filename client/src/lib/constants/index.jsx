@@ -3,7 +3,6 @@ import {
 	HiOutlinePlusCircle,
 	HiOutlineFire,
 	HiOutlineBeaker,
-	HiOutlineQuestionMarkCircle,
 	HiOutlineCog
 } from 'react-icons/hi'
 
