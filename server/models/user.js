@@ -10,7 +10,7 @@ const userSchema = new Schema(
         last_name: String,
         email: String,
         password: String
-    }
+    },
     {
         collection: "users",
     }
