@@ -23,7 +23,7 @@ class Login extends Component {
             password: this.state.password
         };
 
-        fetch('http://127.0.0.1:3000/auth/login', {
+        fetch('http://localhost:3000/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)

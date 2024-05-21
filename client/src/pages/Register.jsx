@@ -6,7 +6,8 @@ class Register extends Component {
         super(props);
 
         this.state = {
-            name: '',
+            first_name: '',
+            last_name: '',
             email: '',
             password: '',
             success: false,
@@ -22,12 +23,13 @@ class Register extends Component {
         e.preventDefault();
 
         const user = {
-            name: this.state.first_name,
+            first_name: this.state.first_name,
+            last_name: this.state.last_name,
             email: this.state.email,
             password: this.state.password
         };
 
-        fetch('http://127.0.0.1:3000/auth/register', {
+        fetch('http://localhost:3000/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
@@ -39,7 +41,7 @@ class Register extends Component {
         })
         .catch((error) => {
             console.log(error);
-            this.setState({ error: error, success: false });
+            this.setState({ error: error, success: false })
         });
     };
 
@@ -48,12 +50,17 @@ class Register extends Component {
             <div className="flex items-center justify-center h-screen bg-gray-100">
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-lg font-semibold mb-4 text-center">Criar Conta</h2>
-                    <form onSubmit={this.onSubmit} >
+                    <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
-                                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome</label>
-                                <input type="text" id="name" name="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
+                                <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Primeiro Nome</label>
+                                <input type="text" id="first_name" name="first_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
                                 value={this.state.first_name} onChange={this.onChange}/>
+                            </div>
+                            <div>
+                                <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Sobrenome</label>
+                                <input type="text" id="last_name" name="last_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
+                                value={this.state.last_name} onChange={this.onChange}/>
                             </div>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">E-mail</label>
