@@ -27,7 +27,7 @@ class Register extends Component {
             password: this.state.password
         };
 
-        fetch('http://172.31.46.227:3000/auth/register', {
+        fetch('http://127.0.0.1:8080/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
