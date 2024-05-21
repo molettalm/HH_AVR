@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, HashRouter } from 'react-router-dom'
 import Layout from './components/shared/Layout'
 import Register from './pages/Register'
+import Login from './pages/Login'
 import Exercicios from './pages/Exercicios'
 import Resumo from './pages/Resumo'
 import ListMedicamentos from './pages/ListMedicamentos'
@@ -24,6 +25,7 @@ function App() {
                     <Route path="configuracoes" element={<Configuracoes />} />
                 </Route>
                 <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
             </Routes>
         </HashRouter>
     )
