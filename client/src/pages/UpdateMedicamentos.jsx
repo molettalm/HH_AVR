@@ -22,7 +22,7 @@ class UpdateMedicamentos extends Component {
 			headers: { 'Content-Type': 'application/json' },
 		};
 		
-		fetch('http://172.31.8.116:8080/medicines/'+id, requestOptions)
+		fetch('http://127.0.0.1:8080/medicines/'+id, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({
@@ -55,7 +55,7 @@ class UpdateMedicamentos extends Component {
 			first_intake: this.state.first_intake
 		};
 
-		fetch('http://172.31.8.116:8080/medicines/update/'+id, {
+		fetch('http://127.0.0.1:8080/medicines/update/'+id, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(medicine)
