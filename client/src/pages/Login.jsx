@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 class Login extends Component {
 
@@ -7,7 +8,9 @@ class Login extends Component {
 
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            success: false,
+            error: ''
         };
     }
 
@@ -28,22 +31,30 @@ class Login extends Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
         })
-        .then(() => {
-            window.localStorage.setItem("isAuthenticated", true);
-            this.setState({ success: true, error: false });
-            setTimeout(() => { window.location.replace('/#/'); }, 100);
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+        .then(({ status, body }) => {
+            if (status === 200) {
+                window.localStorage.setItem("isAuthenticated", true);
+                this.setState({ success: true, error: '' });
+                window.location.replace('/#/');
+            } else {
+                this.setState({ error: body.message || 'Failed to login.' });
+            }
         })
         .catch((error) => {
             console.log(error);
-            this.setState({ error: error, success: false });
+            this.setState({ error: 'Failed to login.' });
         });
     };
 
     render() {
+        const { error, success } = this.state;
         return (
             <div className="flex items-center justify-center h-screen bg-gray-100">
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-lg font-semibold mb-4 text-center">Login</h2>
+                    {success && <p style={{ color: 'green' }}>Login bem-sucedido!</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}  
                     <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
@@ -59,6 +70,9 @@ class Login extends Component {
                         </div>
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
                     </form>
+                    <p className="mt-2">
+                       Não tem uma conta? <Link to={"/register"}>Registre-se</Link>
+                    </p>
                 </div>
             </div>
         );

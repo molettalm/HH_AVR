@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 class Register extends Component {
 
@@ -11,7 +12,7 @@ class Register extends Component {
             email: '',
             password: '',
             success: false,
-            error: false,
+            error: ''
         };
     }
 
@@ -34,22 +35,30 @@ class Register extends Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
         })
-        .then(() => {
-            window.localStorage.setItem("isAuthenticated", true);
-            this.setState({ success: true, error: false });
-            setTimeout(() => { window.location.replace('/#/'); }, 100);
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+        .then(({ status, body }) => {
+            if (status === 200) {
+                window.localStorage.setItem("isAuthenticated", true);
+                this.setState({ success: true, error: '' });
+                window.location.replace('/#/');
+            } else {
+                this.setState({ error: body.message || 'Failed to register.' });
+            }
         })
         .catch((error) => {
             console.log(error);
-            this.setState({ error: error, success: false })
+            this.setState({ error: 'Failed to register.' });
         });
     };
 
     render() {
+        const { error, success } = this.state;
         return (
             <div className="flex items-center justify-center h-screen bg-gray-100">
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-lg font-semibold mb-4 text-center">Criar Conta</h2>
+                    {success && <p style={{ color: 'green' }}>Conta criada!</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}  
                     <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
@@ -75,6 +84,9 @@ class Register extends Component {
                         </div>
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrar</button>
                     </form>
+                    <p className="mt-2">
+                       Já possui uma conta? <Link to={"/login"}>Login</Link>
+                    </p>
                 </div>
             </div>
         );
