@@ -1,13 +1,19 @@
-const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose');
+const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-    googleId: String // For Google OAuth
-});
+const Schema = mongoose.Schema;
 
-userSchema.plugin(passportLocalMongoose);
+const userSchema = new Schema(
+    {
+        id: String,
 
-module.exports = mongoose.model('User', userSchema);
+        first_name: String,
+        last_name: String,
+        email: String,
+        password: String
+    },
+    {
+        collection: "users",
+    }
+);
+
+module.exports = mongoose.model("users", userSchema);

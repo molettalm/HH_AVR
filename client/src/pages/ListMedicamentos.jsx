@@ -24,7 +24,7 @@ class ListMedicamentos extends Component {
 			headers: { 'Content-Type': 'application/json' },
 		};
 
-		fetch('http://localhost:3000/medicines', requestOptions)
+		fetch('http://127.0.0.1:3000/medicines', requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({ medicines: data })
@@ -40,7 +40,7 @@ class ListMedicamentos extends Component {
 			headers: { 'Content-Type': 'application/json' },
 		};
 
-		fetch('http://localhost:3000/medicines/' + id, requestOptions)
+		fetch('http://127.0.0.1:3000/medicines/' + id, requestOptions)
 			.then(() => {
 				// Filter out the deleted medicine from the state
 				this.setState({
