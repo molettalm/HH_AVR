@@ -139,6 +139,13 @@ resource "aws_security_group" "load_balancer_security_group" {
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic in from all sources
   }
 
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allowing HTTP traffic to backend from all sources
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -197,7 +204,7 @@ resource "aws_ecs_service" "app_service" {
   cluster         = "${aws_ecs_cluster.my_cluster.id}"             # Reference the created Cluster
   task_definition = "${aws_ecs_task_definition.app_task.arn}" # Reference the task that the service will spin up
   launch_type     = "FARGATE"
-  desired_count   = 2 # Set up the number of containers to 3
+  desired_count   = 1 # Set up the number of containers to 3
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.target_group.arn}" # Reference the target group
