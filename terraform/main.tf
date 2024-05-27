@@ -15,8 +15,6 @@ terraform {
   }
 }
 
-
-
 provider "aws" {
   region  = "us-east-1" # The region where environment is going to be deployed # Use your own region here
 }
@@ -152,6 +150,14 @@ resource "aws_security_group" "load_balancer_security_group" {
   ]
 }
 
+resource "aws_lb_target_group" "backend_target_group" {
+  name        = "backend-target-group"
+  port        = 8080
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = "${aws_default_vpc.default_vpc.id}"
+}
+
 resource "aws_lb_target_group" "target_group" {
   name        = "target-group"
   port        = 80
@@ -170,6 +176,22 @@ resource "aws_lb_listener" "listener" {
   }
 }
 
+resource "aws_lb_listener_rule" "backend_listener_rule" {
+  listener_arn = "${aws_lb_listener.listener.arn}"
+  priority     = 2
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.backend_target_group.arn}"
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]
+    }
+  }
+}
+
 resource "aws_ecs_service" "app_service" {
   name            = "hh-service"                             # Name the  service
   cluster         = "${aws_ecs_cluster.my_cluster.id}"             # Reference the created Cluster
@@ -181,6 +203,12 @@ resource "aws_ecs_service" "app_service" {
     target_group_arn = "${aws_lb_target_group.target_group.arn}" # Reference the target group
     container_name   = "hh-client"
     container_port   = 80 # Specify the container port
+  }
+
+  load_balancer {
+    target_group_arn = "${aws_lb_target_group.backend_target_group.arn}"
+    container_name   = "hh-server"
+    container_port   = 8080
   }
 
   network_configuration {

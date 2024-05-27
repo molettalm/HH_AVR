@@ -26,11 +26,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/feed', feedRoutes);
-app.use('/exercises', exercisesRouter);
-app.use('/infos', infoRouter);
-app.use('/dailies', dailiesRouter);
-app.use('/medicines', medicinesRouter);
+app.use('/api/feed', feedRoutes);
+app.use('/api/exercises', exercisesRouter);
+app.use('/api/infos', infoRouter);
+app.use('/api/dailies', dailiesRouter);
+app.use('/api/medicines', medicinesRouter);
 
 mongoose.connect(
     'mongodb+srv://admin:admin@healthyhub-dev.8v74ddz.mongodb.net/?retryWrites=true&w=majority&appName=healthyhub-dev',

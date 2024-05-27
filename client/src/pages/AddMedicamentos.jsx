@@ -27,7 +27,7 @@ class AddMedicamentos extends Component {
 			first_intake: this.state.first_intake
 		};
 
-		fetch('http://127.0.0.1:8080/medicines/add', {
+		fetch('http://127.0.0.1:8080/api/medicines/add', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(medicine)
