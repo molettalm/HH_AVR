@@ -1,0 +1,53 @@
+name: Deploy Client to S3
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: 'us-east-1'
+
+    - name: Retrieve SSH key from S3
+      run: |
+        aws s3 cp s3://hhavr-terraform-state/aux/my2key.pem /tmp/my-ssh-key.pem
+        chmod 600 /tmp/my-ssh-key.pem
+
+    - name: Retrieve EC2 IP from S3 and format URI
+      run: |
+        aws s3 cp s3://hhavr-terraform-state/aux/ec2_ip.txt ec2_ip.txt
+        EC2_PUBLIC_IP=$(<ec2_ip.txt)
+        EC2_PUBLIC_IP_FORMATTED=$(echo $EC2_PUBLIC_IP | sed 's/\./-/g')
+        SSH_URI="ec2-user@ec2-${EC2_PUBLIC_IP_FORMATTED}.compute-1.amazonaws.com"
+        echo "SSH_URI=${SSH_URI}" >> $GITHUB_ENV
+
+    - name: Setup EC2 instance
+      run: |
+        ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << 'ENDSSH'
+         sudo yum update -y
+         sudo yum install -y python3-pip
+         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+         source ~/.bashrc
+         nvm install --lts
+         node -e "console.log('Running Node.js ' + process.version)"
+        ENDSSH
+      
+
+
+
+        
