@@ -52,21 +52,22 @@ jobs:
           curl -o actions-runner-linux-x64-2.316.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.316.1/actions-runner-linux-x64-2.316.1.tar.gz
           tar xzf ./actions-runner-linux-x64-2.316.1.tar.gz
           ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
+          ./run.sh &
           sudo ./svc.sh install
-          sudo systemctl enable actions.runner.$(hostname).service
-          sudo systemctl start actions.runner.$(hostname).service
+          sudo ./svc.sh start
          else
           echo "actions-runner directory exists. Checking for configured runner..."
           cd actions-runner
           if [ ! -f ".runner" ]; then
             echo "Runner not configured. Configuring now..."
             ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
+            ./run.sh &
             sudo ./svc.sh install
-            sudo systemctl enable actions.runner.$(hostname).service
-            sudo systemctl start actions.runner.$(hostname).service
+            sudo ./svc.sh start
           else
             echo "Runner is already configured. "
-            sudo systemctl restart actions.runner.$(hostname).service
+            sudo ./svc.sh stop
+            sudo ./svc.sh start
             
           fi
          fi
