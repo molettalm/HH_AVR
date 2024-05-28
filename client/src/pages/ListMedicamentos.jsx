@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+
+const appApiUrl = process.env.APP_API_URL;
+
 const Medicine = props => (
     <tr>
         <td>{props.medicine.medicine_name}</td>
@@ -30,7 +33,7 @@ class ListMedicamentos extends Component {
             },
 		};
 
-		fetch(`http://localhost:3000/medicines?username=${username}`, requestOptions)
+		fetch(`${appApiUrl}/medicines?username=${username}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({ medicines: data })
@@ -51,7 +54,7 @@ class ListMedicamentos extends Component {
             },
 		};
 
-		fetch('http://localhost:3000/medicines/' + id, requestOptions)
+		fetch(`${appApiUrl}/medicines/` + id, requestOptions)
 			.then(() => {
 				// Filter out the deleted medicine from the state
 				this.setState({

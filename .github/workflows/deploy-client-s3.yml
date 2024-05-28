@@ -19,6 +19,11 @@ jobs:
       with:
         node-version: '14'
 
+    - name: Create env file
+      working-directory: ./client
+      run: |
+          echo "APP_API_URL=${{ secrets.APP_API_URL }}" > ./client/.env.production
+  
     - name: Install Dependencies
       working-directory: ./client
       run: yarn install

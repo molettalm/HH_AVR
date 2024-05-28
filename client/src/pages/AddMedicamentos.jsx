@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+
+const appApiUrl = process.env.APP_API_URL;
+
 class AddMedicamentos extends Component {
 
 	constructor(props) {
@@ -29,7 +32,7 @@ class AddMedicamentos extends Component {
 
 		const token = localStorage.getItem('token'); // Retrieve the token from localStorage
 
-		fetch('http://localhost:3000/medicines/add', {
+		fetch(`${appApiUrl}/medicines/add`, {
 			method: 'POST',
 			headers: { 
 				'Content-Type': 'application/json',

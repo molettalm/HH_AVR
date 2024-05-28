@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
+
+const appApiUrl = process.env.APP_API_URL;
+
 class Login extends Component {
 
     constructor(props) {
@@ -26,7 +29,7 @@ class Login extends Component {
             password: this.state.password
         };
 
-        fetch('http://localhost:3000/login', {
+        fetch(`${appApiUrl}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)

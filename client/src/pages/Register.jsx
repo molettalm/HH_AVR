@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
+const appApiUrl = process.env.APP_API_URL;
+
 class Register extends Component {
 
     constructor(props) {
@@ -28,7 +30,7 @@ class Register extends Component {
             password: this.state.password
         };
 
-        fetch('http://localhost:3000/register', {
+        fetch(`${appApiUrl}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)

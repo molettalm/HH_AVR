@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+const appApiUrl = process.env.APP_API_URL;
+
+
 class UpdateMedicamentos extends Component {
 
 	constructor(props) {
@@ -22,7 +25,7 @@ class UpdateMedicamentos extends Component {
 			headers: { 'Content-Type': 'application/json' },
 		};
 		
-		fetch('http://localhost:3000/medicines/'+id, requestOptions)
+		fetch(`${appApiUrl}/medicines/`+id, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({
@@ -55,7 +58,7 @@ class UpdateMedicamentos extends Component {
 			first_intake: this.state.first_intake
 		};
 
-		fetch('http://localhost:3000/medicines/update/'+id, {
+		fetch(`${appApiUrl}/medicines/update/`+id, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(medicine)
