@@ -19,12 +19,18 @@ class ListMedicamentos extends Component {
 	}
 
 	componentDidMount() {
+        const token = localStorage.getItem('token'); // Get the token from local storage
+		const username = localStorage.getItem('username');
+
 		const requestOptions = {
 			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Add authorization header with token
+            },
 		};
 
-		fetch('http://localhost:3000/medicines', requestOptions)
+		fetch(`http://localhost:3000/medicines?username=${username}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({ medicines: data })
@@ -35,9 +41,14 @@ class ListMedicamentos extends Component {
 	}
 
 	deleteMedicine = (id) => {
+        const token = localStorage.getItem('token'); // Get the token from local storage
+
 		const requestOptions = {
 			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Add authorization header with token
+            },
 		};
 
 		fetch('http://localhost:3000/medicines/' + id, requestOptions)

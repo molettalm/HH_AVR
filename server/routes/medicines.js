@@ -1,8 +1,12 @@
 const router = require('express').Router();
 let Medicine = require('../models/medicine.model');
+const authenticateJWT = require('../middleware/authenticateJWT');
+
+router.use(authenticateJWT);
 
 router.route('/').get((req, res) => {
-    Medicine.find()
+    const { username } = req.query; // Extract the username from the query parameters
+    Medicine.find({ username }) // Filter medicines by the provided username
         .then(medicines => res.json(medicines))
         .catch(err => res.status(400).json('Error: ' + err));
 });

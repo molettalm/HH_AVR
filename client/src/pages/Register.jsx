@@ -7,8 +7,7 @@ class Register extends Component {
         super(props);
 
         this.state = {
-            first_name: '',
-            last_name: '',
+            username: '',
             email: '',
             password: '',
             success: false,
@@ -24,25 +23,26 @@ class Register extends Component {
         e.preventDefault();
 
         const user = {
-            first_name: this.state.first_name,
-            last_name: this.state.last_name,
+            username: this.state.username,
             email: this.state.email,
             password: this.state.password
         };
 
-        fetch('http://localhost:3000/auth/register', {
+        fetch('http://localhost:3000/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
         })
-        .then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(({ status, body }) => {
-            if (status === 200) {
-                window.localStorage.setItem("isAuthenticated", true);
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                // If registration is successful and a token is returned
+                window.localStorage.setItem("token", data.token); // Store the token in local storage
+                localStorage.setItem("username", this.state.username);
                 this.setState({ success: true, error: '' });
-                window.location.replace('/#/');
+                window.location.replace('/#/'); // Redirect to homepage or any other page
             } else {
-                this.setState({ error: body.message || 'Failed to register.' });
+                this.setState({ error: data.error || 'Failed to register.' }); // Access 'error' from data
             }
         })
         .catch((error) => {
@@ -62,14 +62,9 @@ class Register extends Component {
                     <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
-                                <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Primeiro Nome</label>
-                                <input type="text" id="first_name" name="first_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                                value={this.state.first_name} onChange={this.onChange}/>
-                            </div>
-                            <div>
-                                <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Sobrenome</label>
-                                <input type="text" id="last_name" name="last_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                                value={this.state.last_name} onChange={this.onChange}/>
+                                <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome de usuário</label>
+                                <input type="text" id="username" name="username" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
+                                value={this.state.username} onChange={this.onChange}/>
                             </div>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">E-mail</label>

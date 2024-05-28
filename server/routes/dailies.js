@@ -1,5 +1,6 @@
 const router = require('express').Router();
 let Daily = require('../models/daily.model');
+const authenticateJWT = require('../middleware/authenticateJWT');
 
 router.route('/').get((req, res) => {
     Daily.find()
