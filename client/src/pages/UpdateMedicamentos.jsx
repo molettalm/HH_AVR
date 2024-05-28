@@ -5,6 +5,7 @@ class UpdateMedicamentos extends Component {
 	constructor(props) {
 		super(props);
 
+        // Initialize state
 		this.state = {
 			username: '',
 			medicine_name: '',
@@ -13,6 +14,7 @@ class UpdateMedicamentos extends Component {
 		};
 	}
 
+    // Fetch medicine data when component mounts
 	componentDidMount() {
 		const href = window.location.href;
 		const id = href.match(/\/([^\/]+)$/)[1];
@@ -22,7 +24,7 @@ class UpdateMedicamentos extends Component {
 			headers: { 'Content-Type': 'application/json' },
 		};
 		
-		fetch('http://localhost:3000/medicines/'+id, requestOptions)
+		fetch('http://localhost:3000/medicines/' + id, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({
@@ -34,14 +36,16 @@ class UpdateMedicamentos extends Component {
 			})
 			.catch((error) => {
 				console.log(error);
-			})
+			});
 	}
 
+    // Handle input changes
 	onChange = (e) => {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
 	}
 
+    // Handle form submission
 	onSubmit = (e) => {
 		e.preventDefault();
 
@@ -49,15 +53,20 @@ class UpdateMedicamentos extends Component {
 		const id = href.match(/\/([^\/]+)$/)[1];
 
 		const medicine = {
-			username: this.state.username,
+			username: localStorage.getItem('username'),
 			medicine_name: this.state.medicine_name,
 			period: parseInt(this.state.period),
 			first_intake: this.state.first_intake
 		};
 
-		fetch('http://localhost:3000/medicines/update/'+id, {
+		const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+
+		fetch('http://localhost:3000/medicines/update/' + id, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}` // Include the token in the request headers
+			},
 			body: JSON.stringify(medicine)
 		})
 		.then(() => {
@@ -72,12 +81,6 @@ class UpdateMedicamentos extends Component {
 		return (
 			<form onSubmit={this.onSubmit}>
 				<div className="grid gap-6 mb-6 md:grid-cols-1">
-					<div>
-						<label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Usuário</label>
-						<input type="text" id="username" name="username" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="FlavioNeto" required 
-						value={this.state.username} onChange={this.onChange}/>
-						<p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Por favor insira seu batata!</p>
-					</div>
 					<div>
 						<label htmlFor="medicine_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome do Remédio</label>
 						<input type="text" id="medicine_name" name="medicine_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Rivotril" required 

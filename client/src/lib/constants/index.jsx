@@ -10,7 +10,7 @@ export const SIDEBAR_LINKS = [
 	{
 		key: 'resumo',
 		label: 'Resumo',
-		path: '/',
+		path: '/resumo',
 		icon: <HiOutlineViewGrid />
 	},
 	{

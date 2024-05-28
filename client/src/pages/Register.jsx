@@ -40,7 +40,7 @@ class Register extends Component {
                 window.localStorage.setItem("token", data.token); // Store the token in local storage
                 localStorage.setItem("username", this.state.username);
                 this.setState({ success: true, error: '' });
-                window.location.replace('/#/'); // Redirect to homepage or any other page
+                window.location.replace('/#/resumo'); // Redirect to homepage or any other page
             } else {
                 this.setState({ error: data.error || 'Failed to register.' }); // Access 'error' from data
             }
