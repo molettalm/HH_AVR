@@ -56,6 +56,14 @@ resource "aws_s3_bucket" "hh_bucket" {
   
 }
 
+resource "aws_s3_bucket_ownership_controls" "hh_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.hh_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+  depends_on = [aws_s3_bucket_public_access_block.hh_bucket_public_access_block]
+}
+
 resource "aws_s3_bucket_public_access_block" "hh_bucket_public_access_block" {
   bucket = aws_s3_bucket.hh_bucket.id
 
@@ -63,13 +71,6 @@ resource "aws_s3_bucket_public_access_block" "hh_bucket_public_access_block" {
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_ownership_controls" "hh_bucket_ownership_controls" {
-  bucket = aws_s3_bucket.hh_bucket.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
 }
 
 resource "aws_s3_bucket_acl" "hh_bucket_acl" {
