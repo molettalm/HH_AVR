@@ -38,7 +38,7 @@ jobs:
 
     - name: Setup EC2 instance
       run: |
-        ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << 'ENDSSH'
+        ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << ENDSSH
          sudo yum update -y
          sudo yum install -y python3-pip libicu
          rm -rf $HOME/.nvm
@@ -62,7 +62,7 @@ jobs:
             ./run.sh
           else
             echo "Runner is already configured. Checking if the service is running..."
-            if [ ! systemctl is-active --quiet actions.runner.molettalm.HH_AVR.service ]; then
+            if systemctl is-active --quiet actions.runner.molettalm.HH_AVR.service; then
               echo "Starting the runner..."
               sudo systemctl start actions.runner.molettalm.HH_AVR.service
             else
