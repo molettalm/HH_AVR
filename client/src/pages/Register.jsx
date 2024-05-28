@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 class Register extends Component {
 
@@ -6,11 +7,11 @@ class Register extends Component {
         super(props);
 
         this.state = {
-            name: '',
+            username: '',
             email: '',
             password: '',
             success: false,
-            error: false,
+            error: ''
         };
     }
 
@@ -22,38 +23,48 @@ class Register extends Component {
         e.preventDefault();
 
         const user = {
-            name: this.state.first_name,
+            username: this.state.username,
             email: this.state.email,
             password: this.state.password
         };
 
-        fetch('http://127.0.0.1:8080/auth/register', {
+        fetch('http://localhost:3000/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
         })
-        .then(() => {
-            window.localStorage.setItem("isAuthenticated", true);
-            this.setState({ success: true, error: false });
-            setTimeout(() => { window.location.replace('/#/'); }, 100);
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                // If registration is successful and a token is returned
+                window.localStorage.setItem("token", data.token); // Store the token in local storage
+                localStorage.setItem("username", this.state.username);
+                this.setState({ success: true, error: '' });
+                window.location.replace('/#/'); // Redirect to homepage or any other page
+            } else {
+                this.setState({ error: data.error || 'Failed to register.' }); // Access 'error' from data
+            }
         })
         .catch((error) => {
             console.log(error);
-            this.setState({ error: error, success: false });
+            this.setState({ error: 'Failed to register.' });
         });
     };
 
     render() {
+        const { error, success } = this.state;
         return (
             <div className="flex items-center justify-center h-screen bg-gray-100">
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-lg font-semibold mb-4 text-center">Criar Conta</h2>
-                    <form onSubmit={this.onSubmit} >
+                    {success && <p style={{ color: 'green' }}>Conta criada!</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}  
+                    <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
-                                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome</label>
-                                <input type="text" id="name" name="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                                value={this.state.first_name} onChange={this.onChange}/>
+                                <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome de usuário</label>
+                                <input type="text" id="username" name="username" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
+                                value={this.state.username} onChange={this.onChange}/>
                             </div>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">E-mail</label>
@@ -68,6 +79,9 @@ class Register extends Component {
                         </div>
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrar</button>
                     </form>
+                    <p className="mt-2">
+                       Já possui uma conta? <Link to={"/login"}>Login</Link>
+                    </p>
                 </div>
             </div>
         );
