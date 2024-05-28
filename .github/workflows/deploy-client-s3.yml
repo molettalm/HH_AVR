@@ -27,24 +27,17 @@ jobs:
       working-directory: ./client
       run: CI=false yarn build
 
-    - name: Install AWS CLI
-      working-directory: ./client
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y awscli
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: 'us-east-1'
 
-    - name: Empty S3 Bucket
+    - name: Sync build directory to S3
+      run: aws s3 sync build/ s3://hhportal-test/ --delete
       working-directory: ./client
-      run: aws s3 rm s3://hhportal-test  --recursive
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: 'us-east-1'
 
-    - name: Deploy to S3
-      working-directory: ./client
-      run: aws s3 cp build/ s3://hhportal-test / --recursive 
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: 'us-east-1'
+
+
+        
