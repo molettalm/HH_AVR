@@ -92,16 +92,16 @@ resource "aws_s3_bucket_policy" "hh_bucket_policy" {
 
 
 output "ec2_instance_public_ip" {
-  value = aws_instance.your_instance.public_ip
+  value = aws_instance.hh_ec2.public_ip
   description = "The public IP of the EC2 instance"
 }
 
 output "website_endpoint" {
   description = "The DNS name of the website."
-  value       = aws_s3_bucket.frontend_bucket.website_endpoint
+  value       = aws_s3_bucket.hh_bucket.website_endpoint
 }
 
 output "website_domain" {
   description = "The domain name of the website."
-  value       = aws_s3_bucket.frontend_bucket.website_domain
+  value       = aws_s3_bucket.hh_bucket.website_domain
 }
