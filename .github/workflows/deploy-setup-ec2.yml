@@ -52,14 +52,14 @@ jobs:
           curl -o actions-runner-linux-x64-2.316.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.316.1/actions-runner-linux-x64-2.316.1.tar.gz
           tar xzf ./actions-runner-linux-x64-2.316.1.tar.gz
           ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
-          ./run.sh
+          ./run.sh &
          else
           echo "actions-runner directory exists. Checking for configured runner..."
           cd actions-runner
           if [ ! -f ".runner" ]; then
             echo "Runner not configured. Configuring now..."
             ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
-            ./run.sh
+            ./run.sh &
           else
             echo "Runner is already configured. Checking if the service is running..."
             if systemctl is-active --quiet actions.runner.molettalm.HH_AVR.service; then
