@@ -47,11 +47,12 @@ jobs:
          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
          source ~/.bashrc
          nvm install --lts
+         export REPO_TOKEN=${REPO_TOKEN}
          RUNNER_NAME=$(hostname)
-         RUNNER_ID=$(curl -s -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+         RUNNER_ID=$(curl -s -H "Authorization: token ${REPO_TOKEN}" \
           "https://api.github.com/repos/molettalm/HH_AVR/actions/runners" | jq ".runners[] | select(.name==\"$RUNNER_NAME\") | .id")
          if [ ! -z "$RUNNER_ID" ]; then
-          curl -s -H "Authorization: token ${{ secrets.REPO_TOKEN }}" -X DELETE \
+           curl -s -H "Authorization: token ${REPO_TOKEN}" -X DELETE \
             "https://api.github.com/repos/molettalm/HH_AVR/actions/runners/$RUNNER_ID"
          fi
          rm -rf actions-runner
