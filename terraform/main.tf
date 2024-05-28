@@ -132,29 +132,23 @@ resource "aws_alb" "application_load_balancer" {
 
 # Creating a security group for the load balancer:
 resource "aws_security_group" "load_balancer_security_group" {
+  name = "load_balancer_sg"
+  description = "Security group for ALB and ECS service"
+  vpc_id = aws_default_vpc.default_vpc.id
+
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allowing traffic in from all sources
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allowing HTTP traffic to backend from all sources
+    cidr_blocks = ["0.0.0.0/0"] # Allowing HTTP traffic in from all sources
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Allowing all outbound traffic
   }
-  depends_on = [
-    aws_default_vpc.default_vpc
-  ]
 }
 
 resource "aws_lb_target_group" "backend_target_group" {
@@ -225,13 +219,23 @@ resource "aws_ecs_service" "app_service" {
   }
 }
 
-resource "aws_security_group" "service_security_group" {
+resource "aws_security_group" "ecs_service_security_group" {
+  name = "ecs_service_sg"
+  description = "Security group for ECS service"
+  vpc_id = aws_default_vpc.default_vpc.id
+
   ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    # Only allowing traffic in from the load balancer security group
-    security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -240,7 +244,6 @@ resource "aws_security_group" "service_security_group" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 }
 
 #Log the load balancer app url
