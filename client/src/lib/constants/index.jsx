@@ -9,7 +9,7 @@ import {
 export const SIDEBAR_LINKS = [
 	{
 		key: 'resumo',
-		label: 'Teste malvado',
+		label: 'Resumo',
 		path: '/',
 		icon: <HiOutlineViewGrid />
 	},
