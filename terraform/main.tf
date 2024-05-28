@@ -19,215 +19,89 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_ecr_repository" "app_ecr_repo" {
-  name = "hh-repo"
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "aws_ecs_cluster" "my_cluster" {
-  name = "hh-cluster"
-}
-
-resource "aws_default_vpc" "default_vpc" {}
-
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name               = "ecsTaskExecutionRole"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = aws_iam_role.ecsTaskExecutionRole.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "aws_ecs_task_definition" "app_task" {
-  family                   = "hh-family-task"
-  container_definitions    = jsonencode([
-    {
-      name      = "hh-client"
-      image     = "${aws_ecr_repository.app_ecr_repo.repository_url}:client"
-      essential = true
-      portMappings = [
-        {
-          containerPort = 80
-        }
-      ]
-    },
-    {
-      name      = "hh-server"
-      image     = "${aws_ecr_repository.app_ecr_repo.repository_url}:server"
-      essential = true
-      portMappings = [
-        {
-          containerPort = 8080
-        }
-      ]
-    }
-  ])
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  memory                   = 512
-  cpu                      = 256
-  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
-}
-
-resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = "us-east-1a"
-  depends_on = [
-    aws_default_vpc.default_vpc
-  ]
-}
-
-resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = "us-east-1b"
-  depends_on = [
-    aws_default_vpc.default_vpc
-  ]
-}
-
-resource "aws_security_group" "load_balancer_security_group" {
-  name        = "load_balancer_sg"
-  description = "Security group for ALB and ECS service"
-  vpc_id      = aws_default_vpc.default_vpc.id
+resource "aws_security_group" "hh_ec2_security_group" {
+  name        = "allow_ssh"
+  description = "Allow SSH inbound traffic"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description      = "SSH from anywhere"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 }
 
-resource "aws_alb" "application_load_balancer" {
-  name               = "hh-alb"
-  load_balancer_type = "application"
-  subnets            = [
-    aws_default_subnet.default_subnet_a.id,
-    aws_default_subnet.default_subnet_b.id
-  ]
-  security_groups    = [aws_security_group.load_balancer_security_group.id]
-}
+resource "aws_instance" "hh_ec2" {
+  ami           = "ami-0bb84b8ffd87024d8" 
+  instance_type = "t2.micro"
+  key_name      = "my2key"
 
-resource "aws_lb_target_group" "frontend_target_group" {
-  name        = "frontend-target-group"
-  port        = 80
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = aws_default_vpc.default_vpc.id
-}
+  security_groups = [aws_security_group.hh_ec2_security_group.name]
 
-resource "aws_lb_target_group" "backend_target_group" {
-  name        = "backend-target-group"
-  port        = 8080
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = aws_default_vpc.default_vpc.id
-}
-
-resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_alb.application_load_balancer.arn
-  port              = "80"
-  protocol          = "HTTP"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.frontend_target_group.arn
+  root_block_device {
+    volume_size = 8 # 8GB
   }
 }
 
-resource "aws_lb_listener_rule" "backend_listener_rule" {
-  listener_arn = aws_lb_listener.listener.arn
-  priority     = 2
+resource "aws_s3_bucket" "hh_bucket" {
+  bucket = "hhubportal" # Make sure this is globally unique
+  
+}
 
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.backend_target_group.arn
+resource "aws_s3_bucket_acl" "hh_bucket_acl" {
+  bucket = aws_s3_bucket.hh_bucket.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_website_configuration" "hh_bucket_website" {
+  bucket = aws_s3_bucket.hh_bucket.id
+
+  index_document {
+    suffix = "index.html"
   }
 
-  condition {
-    path_pattern {
-      values = ["/api/*"]
-    }
+  error_document {
+    key = "index.html"
   }
 }
 
-resource "aws_security_group" "service_security_group" {
-  name        = "ecs_service_sg"
-  description = "Security group for ECS service"
-  vpc_id      = aws_default_vpc.default_vpc.id
+resource "aws_s3_bucket_policy" "hh_bucket_policy" {
+  bucket = aws_s3_bucket.hh_bucket.id
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid       = "AllowPublicReadAcess",
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = "s3:GetObject",
+        Resource  = "${aws_s3_bucket.hh_bucket.arn}/*"
+      },
+    ],
+  })
 }
 
-resource "aws_ecs_service" "app_service" {
-  name            = "hh-service"
-  cluster         = aws_ecs_cluster.my_cluster.id
-  task_definition = aws_ecs_task_definition.app_task.arn
-  launch_type     = "FARGATE"
-  desired_count   = 1
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.frontend_target_group.arn
-    container_name   = "hh-client"
-    container_port   = 80
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.backend_target_group.arn
-    container_name   = "hh-server"
-    container_port   = 8080
-  }
-
-  network_configuration {
-    subnets          = [aws_default_subnet.default_subnet_a.id, aws_default_subnet.default_subnet_b.id]
-    assign_public_ip = true
-    security_groups  = [aws_security_group.service_security_group.id]
-  }
+output "ec2_instance_public_ip" {
+  value = aws_instance.your_instance.public_ip
+  description = "The public IP of the EC2 instance"
 }
 
-output "app_url" {
-  value = aws_alb.application_load_balancer.dns_name
+output "website_endpoint" {
+  description = "The DNS name of the website."
+  value       = aws_s3_bucket.frontend_bucket.website_endpoint
+}
+
+output "website_domain" {
+  description = "The domain name of the website."
+  value       = aws_s3_bucket.frontend_bucket.website_domain
 }
