@@ -25,7 +25,7 @@ jobs:
 
     - name: Build
       working-directory: ./client
-      run: yarn build
+      run: CI=false yarn build
 
     - name: Install AWS CLI
       working-directory: ./client
