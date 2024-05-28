@@ -56,6 +56,22 @@ resource "aws_s3_bucket" "hh_bucket" {
   
 }
 
+resource "aws_s3_bucket_public_access_block" "hh_bucket_public_access_block" {
+  bucket = aws_s3_bucket.hh_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_ownership_controls" "hh_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.hh_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "hh_bucket_acl" {
   bucket = aws_s3_bucket.hh_bucket.id
   acl    = "public-read"
@@ -98,10 +114,5 @@ output "ec2_instance_public_ip" {
 
 output "website_endpoint" {
   description = "The DNS name of the website."
-  value       = aws_s3_bucket.hh_bucket.website_endpoint
-}
-
-output "website_domain" {
-  description = "The domain name of the website."
-  value       = aws_s3_bucket.hh_bucket.website_domain
+  value       = aws_s3_bucket_website_configuration.hh_bucket_website.website_endpoint
 }
