@@ -20,10 +20,11 @@ jobs:
         node-version: '14'
 
     - name: Create env file
-      run: |
-          cd ./client
-          echo "APP_API_URL=${{ secrets.APP_API_URL }}" > ./client/.env.production
-  
+      working-directory: ./client
+      run: echo "APP_API_URL=${{ secrets.APP_API_URL }}" > ./client/.env.production
+
+      shell: bash
+   
     - name: Install Dependencies
       working-directory: ./client
       run: yarn install
