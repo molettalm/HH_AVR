@@ -219,7 +219,7 @@ resource "aws_ecs_service" "app_service" {
   }
 }
 
-resource "aws_security_group" "ecs_service_security_group" {
+resource "aws_security_group" "service_security_group" {
   name = "ecs_service_sg"
   description = "Security group for ECS service"
   vpc_id = aws_default_vpc.default_vpc.id
