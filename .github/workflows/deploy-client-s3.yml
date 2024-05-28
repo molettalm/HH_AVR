@@ -42,7 +42,7 @@ jobs:
         aws-region: 'us-east-1'
 
     - name: Sync build directory to S3
-      run: aws s3 sync build/ s3://hhportal-test/ --delete
+      run: aws s3 sync build/ s3://hhubportal/ --delete
       working-directory: ./client
 
 
