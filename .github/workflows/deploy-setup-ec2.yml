@@ -1,4 +1,4 @@
-name: Deploy Client to S3
+name: Setup EC2 instance
 
 on:
   workflow_dispatch:
