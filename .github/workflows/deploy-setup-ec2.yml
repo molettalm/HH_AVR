@@ -41,16 +41,7 @@ jobs:
         ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << ENDSSH
          sudo yum update -y
          sudo yum install -y yum-utils
-         sudo yum install -y amazon-linux-extras
-         if ! command -v docker &> /dev/null; then
-           echo "Docker is not installed. Installing Docker..."
-           sudo amazon-linux-extras install docker
-           sudo systemctl start docker && sudo chmod 666 /var/run/docker.sock && sudo systemctl enable docker && docker --version
-         else
-           echo "Docker is already installed."
-           sudo systemctl start docker
-           sudo systemctl enable docker
-         sudo yum install -y python3-pip libicu 
+         sudo yum install -y python3-pip libicu amazon-linux-extras docker
          rm -rf $HOME/.nvm
          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
          source ~/.bashrc
