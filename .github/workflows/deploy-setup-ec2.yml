@@ -40,8 +40,9 @@ jobs:
       run: |
         ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << ENDSSH
          sudo yum update -y
-         sudo yum remove -y nodejs docker.io python3-pip libicu
-         sudo yum install -y python3-pip libicu docker.io
+         sudo yum remove -y nodejs  python3-pip libicu
+         sudo yum install -y python3-pip libicu 
+         sudo apt-get install docker.io -y
          sudo systemctl start docker && sudo chmod 666 /var/run/docker.sock && sudo systemctl enable docker && docker --version
          rm -rf $HOME/.nvm
          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
