@@ -19,6 +19,10 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "aws_ecr_repository" "app_ecr_repo" {
+  name = "hh-repo"
+}
+
 resource "aws_security_group" "hh_ec2_security_group" {
   name        = "hh_ec2_security_group"
 
