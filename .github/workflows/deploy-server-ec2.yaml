@@ -60,10 +60,10 @@ jobs:
           IMAGE_TAG: server
         run: |
           cd ~ && cd server
-          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - name: Delete old container
-        run: docker rm -f hhserver || true
+        run: sudo docker rm -f hhserver || true
       - name: Run docker container
-        run: docker run -d --restart always -p 80:8080 --name hhserver $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        run: sudo docker run -d --restart always -p 80:8080 --name hhserver $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
