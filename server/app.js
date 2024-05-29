@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -14,16 +16,20 @@ const medicinesRouter = require('./routes/medicines');
 
 const app = express();
 
+app.set('port', process.env.PORT || 3000);
+
 // connect to mongoDB
-const dbURI = 'mongodb+srv://admin:admin@healthyhub-dev.8v74ddz.mongodb.net/?retryWrites=true&w=majority&appName=healthyhub-dev'
+const dbURI = process.env.MONGODB_URI;
+
 mongoose
 .connect(dbURI, {
     useNewUrlParser: true, 
     useUnifiedTopology: true
 })
 .then(() => {
-    app.listen(3000, () => {
-        console.log('Server connected to port 3000 and MongoDB')
+    // Listen on the port retrieved from the app settings
+    app.listen(app.get('port'), () => {
+        console.log(`Server connected to port ${app.get('port')} and MongoDB`);
     })
 })
 .catch((error) => {
