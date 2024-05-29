@@ -39,6 +39,7 @@ jobs:
     - name: Setup EC2 instance
       run: |
         ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << ENDSSH
+         dnf upgrade --releasever=2023.4.20240528
          sudo yum update -y
          sudo yum install -y yum-utils
          sudo yum install -y python3-pip libicu amazon-linux-extras docker
