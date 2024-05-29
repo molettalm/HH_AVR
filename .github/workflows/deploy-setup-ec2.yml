@@ -42,6 +42,9 @@ jobs:
          sudo yum clean all
          sudo yum update -y
          sudo yum install -y python3-pip libicu docker
+         export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         set
          rm -rf $HOME/.nvm
          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
          source ~/.bashrc
