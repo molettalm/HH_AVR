@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import dotenv from  'dotenv'
 
-
-const appApiUrl = process.env.APP_API_URL;
+const appApiUrl = process.env.REACT_APP_API_URL;
 
 class AddMedicamentos extends Component {
 

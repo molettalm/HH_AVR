@@ -6,7 +6,7 @@ import BuyerProfilePieChart from '../components/BuyerProfilePieChart'
 import PopularProducts from '../components/PopularProducts'
 
 
-console.log(process.env.APP_API_URL);
+console.log(process.env.REACT_APP_API_URL);
 export default function Dashboard() {
 	return (
 		<div className="flex flex-col gap-4">

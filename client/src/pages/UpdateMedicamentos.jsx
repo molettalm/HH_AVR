@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const appApiUrl = process.env.APP_API_URL;
+const appApiUrl = process.env.REACT_APP_API_URL;
 
 
 class UpdateMedicamentos extends Component {

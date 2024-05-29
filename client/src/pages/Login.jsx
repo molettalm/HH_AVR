@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
 
-const appApiUrl = process.env.APP_API_URL;
+const appApiUrl = process.env.REACT_APP_API_URL;
 
 class Login extends Component {
 
@@ -22,6 +22,7 @@ class Login extends Component {
     };
 
     onSubmit = (e) => {
+        console.log(`${appApiUrl}/login`);
         e.preventDefault();
 
         const user = {

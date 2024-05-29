@@ -9,6 +9,7 @@ import UpdateMedicamentos from './pages/UpdateMedicamentos'
 import AddMedicamentos from './pages/AddMedicamentos'
 import Metricas from './pages/Metricas'
 import Configuracoes from './pages/Configuracoes'
+import dotenv from  'dotenv'
 
 
 function App() {
