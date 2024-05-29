@@ -1,5 +1,8 @@
 const router = require('express').Router();
 let Info = require('../models/info.model');
+const authenticateJWT = require('../middleware/authenticateJWT');
+
+router.use(authenticateJWT);
 
 router.route('/').get((req, res) => {
     Info.find()
