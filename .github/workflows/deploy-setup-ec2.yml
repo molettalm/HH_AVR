@@ -39,10 +39,10 @@ jobs:
     - name: Setup EC2 instance
       run: |
         ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << ENDSSH
-         sudo dnf upgrade --releasever=2023.4.20240528 -y
          sudo yum update -y
-         sudo yum install -y yum-utils
-         sudo yum install -y python3-pip libicu amazon-linux-extras docker
+         sudo yum install -y yum-utils amazon-linux-extras
+         sudo amazon-linux-extras install docker -y
+         sudo yum install -y python3-pip libicu 
          rm -rf $HOME/.nvm
          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
          source ~/.bashrc
