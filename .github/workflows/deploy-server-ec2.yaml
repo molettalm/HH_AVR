@@ -33,7 +33,7 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: hh-repo
+        ECR_REPOSITORY: hh-dockers
         IMAGE_TAG: server
       run: |
         cd server
@@ -60,7 +60,7 @@ jobs:
       - name: Pull image from docker hub
         env:
           ECR_REGISTRY: ${{ steps.login-ecr-2.outputs.registry }}
-          ECR_REPOSITORY: hh-repo
+          ECR_REPOSITORY: hh-dockers
           IMAGE_TAG: server
         run: |
           cd ~ && cd server
