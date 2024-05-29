@@ -48,7 +48,7 @@ class Login extends Component {
             // Update state to indicate successful login
             this.setState({ success: true, error: '' });
             // Redirect to home page or any other route after successful login
-            window.location.replace('/#/'); // Change the URL as needed
+            window.location.replace('/#/resumo'); // Change the URL as needed
         })
         .catch((error) => {
             console.log(error);

@@ -15,7 +15,7 @@ export default function Sidebar() {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         // Redirect to login page or any other desired route
-        window.location.replace('/#/login');
+        window.location.replace('/#/');
     };
 
     return (
