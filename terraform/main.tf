@@ -20,7 +20,7 @@ provider "aws" {
 }
 
 resource "aws_ecr_repository" "app_ecr_repo" {
-  name = "hh-repo"
+  name = "hh-dockers"
 }
 
 resource "aws_security_group" "hh_ec2_security_group" {
