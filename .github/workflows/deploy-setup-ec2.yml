@@ -53,6 +53,7 @@ jobs:
           ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
           sudo ./svc.sh install
           sudo ./svc.sh start
+          exit 0
          else
           echo "actions-runner directory exists. Checking for configured runner..."
           cd actions-runner
@@ -61,6 +62,7 @@ jobs:
             ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
             sudo ./svc.sh install
             sudo ./svc.sh start
+            exit 0
           else
             echo "Runner is already configured. "
             sudo ./svc.sh stop
