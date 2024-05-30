@@ -1,4 +1,4 @@
-name: Server - Deploy on EC2
+name: "[3]Server - Deploy on EC2"
 
 on:
   workflow_dispatch:
