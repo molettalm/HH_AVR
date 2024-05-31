@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "4.45.0"
+      version = "5.51.1"
     }
   }
 
@@ -15,192 +15,125 @@ terraform {
   }
 }
 
-
-
 provider "aws" {
-  region  = "us-east-1" # The region where environment is going to be deployed # Use your own region here
+  region = "us-east-1"
 }
-
 
 resource "aws_ecr_repository" "app_ecr_repo" {
-  name = "hh-repo"
-  lifecycle {
-   prevent_destroy = true
- }
+  name = "hh-dockers"
 }
 
-resource "aws_ecs_cluster" "my_cluster" {
-  name = "hh-cluster" # Name your cluster here
+resource "aws_security_group" "hh_ec2_security_group" {
+  name        = "hh_ec2_security_group"
+
 }
 
-# Provide a reference to your default VPC
-resource "aws_default_vpc" "default_vpc" {
+resource "aws_vpc_security_group_ingress_rule" "allow_https" {
+  security_group_id = aws_security_group.hh_ec2_security_group.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_http" {
+  security_group_id = aws_security_group.hh_ec2_security_group.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
+  security_group_id = aws_security_group.hh_ec2_security_group.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 22
+  ip_protocol       = "tcp"
+  to_port           = 22
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
+  security_group_id = aws_security_group.hh_ec2_security_group.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1" # semantically equivalent to all ports
 }
 
 
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name               = "ecsTaskExecutionRole"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
+resource "aws_instance" "hh_ec2" {
+  ami           = "ami-0bb84b8ffd87024d8" 
+  instance_type = "t2.micro"
+  key_name      = "my2key"
 
-  lifecycle {
-   prevent_destroy = true
- }
-}
+  security_groups = [aws_security_group.hh_ec2_security_group.name]
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
+  root_block_device {
+    volume_size = 8 # 8GB
   }
 }
 
-
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = "${aws_iam_role.ecsTaskExecutionRole.name}"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-
-   lifecycle {
-   prevent_destroy = true
- }
+resource "aws_s3_bucket" "hh_bucket" {
+  bucket = "hhubportal" # Make sure this is globally unique
+  
 }
 
-
-resource "aws_ecs_task_definition" "app_task" {
-  family                   = "hh-family-task" # Name your task
-  container_definitions    = <<DEFINITION
-  [
-    {
-      "name": "hh-client",
-      "image": "${aws_ecr_repository.app_ecr_repo.repository_url}:client",
-      "essential": true,
-      "portMappings": [
-        {
-          "containerPort": 80
-        }
-      ],
-      "memory": 512,
-      "cpu": 256
-    }
-  ]
-  DEFINITION
-  requires_compatibilities = ["FARGATE"] # use Fargate as the lauch type
-  network_mode             = "awsvpc"    # add the awsvpc network mode as this is required for Fargate
-  memory                   = 512         # Specify the memory the container requires
-  cpu                      = 256         # Specify the CPU the container requires
-  execution_role_arn       = "${aws_iam_role.ecsTaskExecutionRole.arn}"
+resource "aws_s3_bucket_ownership_controls" "hh_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.hh_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+  depends_on = [aws_s3_bucket_public_access_block.hh_bucket_public_access_block]
 }
 
+resource "aws_s3_bucket_public_access_block" "hh_bucket_public_access_block" {
+  bucket = aws_s3_bucket.hh_bucket.id
 
-# Provide references to your default subnets
-resource "aws_default_subnet" "default_subnet_a" {
-  # Use your own region here but reference to subnet 1a
-  availability_zone = "us-east-1a"
-
-  depends_on = [
-    aws_default_vpc.default_vpc
-  ]
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
-resource "aws_default_subnet" "default_subnet_b" {
-  # Use your own region here but reference to subnet 1b
-  availability_zone = "us-east-1b"
-  depends_on = [
-    aws_default_vpc.default_vpc
-  ]
+resource "aws_s3_bucket_acl" "hh_bucket_acl" {
+  bucket = aws_s3_bucket.hh_bucket.id
+  acl    = "public-read"
 }
 
-resource "aws_alb" "application_load_balancer" {
-  name               = "hh-alb" # Naming our load balancer
-  load_balancer_type = "application"
-  subnets = [ # Referencing the default subnets
-    "${aws_default_subnet.default_subnet_a.id}",
-    "${aws_default_subnet.default_subnet_b.id}"
-  ]
-  # Referencing the security group
-  security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
-}
+resource "aws_s3_bucket_website_configuration" "hh_bucket_website" {
+  bucket = aws_s3_bucket.hh_bucket.id
 
-# Creating a security group for the load balancer:
-resource "aws_security_group" "load_balancer_security_group" {
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allowing traffic in from all sources
+  index_document {
+    suffix = "index.html"
   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  depends_on = [
-    aws_default_vpc.default_vpc
-  ]
-}
-
-resource "aws_lb_target_group" "target_group" {
-  name        = "target-group"
-  port        = 80
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = "${aws_default_vpc.default_vpc.id}" # Referencing the default VPC
-}
-
-resource "aws_lb_listener" "listener" {
-  load_balancer_arn = "${aws_alb.application_load_balancer.arn}" # Referencing our load balancer
-  port              = "80"
-  protocol          = "HTTP"
-  default_action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.target_group.arn}" # Referencing our tagrte group
+  error_document {
+    key = "index.html"
   }
 }
 
-resource "aws_ecs_service" "app_service" {
-  name            = "hh-service"                             # Name the  service
-  cluster         = "${aws_ecs_cluster.my_cluster.id}"             # Reference the created Cluster
-  task_definition = "${aws_ecs_task_definition.app_task.arn}" # Reference the task that the service will spin up
-  launch_type     = "FARGATE"
-  desired_count   = 2 # Set up the number of containers to 3
+resource "aws_s3_bucket_policy" "hh_bucket_policy" {
+  bucket = aws_s3_bucket.hh_bucket.id
 
-  load_balancer {
-    target_group_arn = "${aws_lb_target_group.target_group.arn}" # Reference the target group
-    container_name   = "hh-client"
-    container_port   = 80 # Specify the container port
-  }
-
-  network_configuration {
-    subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
-    assign_public_ip = true                                                # Provide the containers with public IPs
-    security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
-  }
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid       = "AllowPublicReadAcess",
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = "s3:GetObject",
+        Resource  = "${aws_s3_bucket.hh_bucket.arn}/*"
+      },
+    ],
+  })
 }
 
-resource "aws_security_group" "service_security_group" {
-  ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    # Only allowing traffic in from the load balancer security group
-    security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
-  }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
+output "ec2_instance_public_ip" {
+  value = aws_instance.hh_ec2.public_ip
+  description = "The public IP of the EC2 instance"
 }
 
-#Log the load balancer app url
-output "app_url" {
-  value = aws_alb.application_load_balancer.dns_name
+output "website_endpoint" {
+  description = "The DNS name of the website."
+  value       = aws_s3_bucket_website_configuration.hh_bucket_website.website_endpoint
 }

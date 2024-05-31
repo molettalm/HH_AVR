@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import Cookies from 'js-cookie'; // Import js-cookie library
+
+
+const appApiUrl = process.env.REACT_APP_API_URL;
 
 class Login extends Component {
     constructor(props) {
@@ -17,7 +19,8 @@ class Login extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onSubmit = async (e) => {
+    onSubmit = (e) => {
+        console.log(`${appApiUrl}/login`);
         e.preventDefault();
 
         const user = {
@@ -26,7 +29,7 @@ class Login extends Component {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/login', {
+            const response = await fetch(`${appApiUrl}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(user),
@@ -58,7 +61,7 @@ class Login extends Component {
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-lg font-semibold mb-4 text-center">Login</h2>
                     {success && <p style={{ color: 'green' }}>Login bem-sucedido!</p>}
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}  
                     <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>

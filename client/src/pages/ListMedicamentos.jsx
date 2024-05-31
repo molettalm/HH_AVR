@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Import js-cookie library
 
+
+const appApiUrl = process.env.REACT_APP_API_URL;
+
 const Medicine = props => (
     <tr>
         <td>{props.medicine.medicine_name}</td>
@@ -12,6 +15,8 @@ const Medicine = props => (
         </td>
     </tr>
 );
+
+console.log(`${appApiUrl}/login`);
 
 class ListMedicamentos extends Component {
 	constructor(props) {
@@ -30,7 +35,7 @@ class ListMedicamentos extends Component {
 			credentials: 'include'
 		};
 
-		fetch(`http://localhost:3000/medicines?username=${username}`, requestOptions)
+		fetch(`${appApiUrl}/medicines?username=${username}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.setState({ medicines: data })
@@ -50,7 +55,7 @@ class ListMedicamentos extends Component {
 			credentials: 'include'
 		};
 
-		fetch('http://localhost:3000/medicines/' + id, requestOptions)
+		fetch(`${appApiUrl}/medicines/` + id , requestOptions)
 			.then(() => {
 				// Filter out the deleted medicine from the state
 				this.setState({

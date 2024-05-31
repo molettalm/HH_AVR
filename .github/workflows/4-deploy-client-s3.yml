@@ -1,0 +1,60 @@
+name: "[4]Deploy Client to S3"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["client/**"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: 'us-east-1'
+
+    - name: Retrieve EC2 IP from S3 and format URI
+      working-directory: ./client
+      run: |
+        touch .env
+        aws s3 cp s3://hhavr-terraform-state/aux/ec2_ip.txt ec2_ip.txt
+        EC2_PUBLIC_IP=$(<ec2_ip.txt)
+        API_URL="http://${EC2_PUBLIC_IP}:80"
+        echo "REACT_APP_API_URL=$API_URL" > .env
+      shell: bash
+   
+    - name: Install Dependencies
+      working-directory: ./client
+      run: yarn install
+
+    - name: Build
+      working-directory: ./client
+      run: CI=false yarn build
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: 'us-east-1'
+
+    - name: Sync build directory to S3
+      run: aws s3 sync build/ s3://hhubportal/ --delete
+      working-directory: ./client
+
+
+
+        

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
+const appApiUrl = process.env.REACT_APP_API_URL;
+
 class Register extends Component {
     constructor(props) {
         super(props);
@@ -28,7 +30,7 @@ class Register extends Component {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/register', {
+            const response = await fetch(`${appApiUrl}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include', // Include credentials (cookies)
@@ -56,7 +58,7 @@ class Register extends Component {
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-lg font-semibold mb-4 text-center">Criar Conta</h2>
                     {success && <p style={{ color: 'green' }}>Conta criada!</p>}
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}  
                     <form onSubmit={this.onSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
@@ -106,6 +108,9 @@ class Register extends Component {
                             Já tem uma conta? <Link to="/login" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Login</Link>
                         </p>
                     </form>
+                    <p className="mt-2">
+                       Já possui uma conta? <Link to={"/login"}>Login</Link>
+                    </p>
                 </div>
             </div>
         );

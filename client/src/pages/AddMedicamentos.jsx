@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie'; // Import js-cookie library
 
+const appApiUrl = process.env.REACT_APP_API_URL;
 
 class AddMedicamentos extends Component {
 
@@ -29,7 +30,7 @@ class AddMedicamentos extends Component {
 			first_intake: this.state.first_intake
 		};
 
-		fetch('http://localhost:3000/medicines/add', {
+		fetch(`${appApiUrl}/medicines/add`, {
 			method: 'POST',
 			headers: { 
 				'Content-Type': 'application/json',

@@ -1,0 +1,90 @@
+name: "[3]Server - Deploy on EC2"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["server/**"]
+
+jobs:
+  
+  build:
+    
+    name: Build container on ECR
+    runs-on: ubuntu-latest
+
+   
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+
+    - name: Retrieve EC2 IP from S3 and format URI
+      run: |
+        cd server
+        touch .env
+        echo "PORT=8080" > .env
+        echo "MONGODB_URI='${{ secrets.MONGODB_URI }}'" >> .env
+      shell: bash
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: hh-dockers
+        IMAGE_TAG: server
+      run: |
+        cd server
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy:
+    name: Pull container on EC2
+    needs: build
+    runs-on: self-hosted
+    steps:
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Manual login to Amazon ECR
+        env: 
+           ECR_REGISTRY: 365247921391.dkr.ecr.us-east-1.amazonaws.com
+        run: |
+          aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY
+
+      - name: Pull image from docker hub
+        env:
+          ECR_REGISTRY: 365247921391.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: hh-dockers
+          IMAGE_TAG: server
+        run: |
+          cd ~ && cd server
+          sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+      - name: Delete old container
+        run: sudo docker rm -f hhserver || true
+
+      - name: Run docker container
+        env:
+          ECR_REGISTRY: 365247921391.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: hh-dockers
+          IMAGE_TAG: server
+        run: sudo docker run -d --restart always -p 80:8080 --name hhserver $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+

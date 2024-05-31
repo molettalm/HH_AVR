@@ -1,0 +1,83 @@
+name: "[2]Setup EC2 instance"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: 'us-east-1'
+
+    - name: Retrieve SSH key from S3
+      run: |
+        aws s3 cp s3://hhavr-terraform-state/aux/my2key.pem /tmp/my-ssh-key.pem
+        chmod 600 /tmp/my-ssh-key.pem
+
+    - name: Retrieve EC2 IP from S3 and format URI
+      run: |
+        aws s3 cp s3://hhavr-terraform-state/aux/ec2_ip.txt ec2_ip.txt
+        EC2_PUBLIC_IP=$(<ec2_ip.txt)
+        EC2_PUBLIC_IP_FORMATTED=$(echo $EC2_PUBLIC_IP | sed 's/\./-/g')
+        SSH_URI="ec2-user@ec2-${EC2_PUBLIC_IP_FORMATTED}.compute-1.amazonaws.com"
+        echo "SSH_URI=${SSH_URI}" >> $GITHUB_ENV
+
+    - name: Setup EC2 instance
+      run: |
+        ssh -o "StrictHostKeyChecking=no" -i /tmp/my-ssh-key.pem $SSH_URI << ENDSSH
+         sudo yum clean all
+         sudo yum update -y
+         sudo yum install -y python3-pip libicu docker
+         export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         rm -rf $HOME/.nvm
+         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+         source ~/.bashrc
+         nvm install --lts
+         if [ ! -d "server" ]; then
+          mkdir server
+         fi
+         if [ ! -d "actions-runner" ]; then
+          mkdir actions-runner && cd actions-runner
+          curl -o actions-runner-linux-x64-2.316.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.316.1/actions-runner-linux-x64-2.316.1.tar.gz
+          tar xzf ./actions-runner-linux-x64-2.316.1.tar.gz
+          ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
+          sudo ./svc.sh install
+          sudo ./svc.sh start
+          exit 0
+         else
+          echo "actions-runner directory exists. Checking for configured runner..."
+          cd actions-runner
+          if [ ! -f ".runner" ]; then
+            echo "Runner not configured. Configuring now..."
+            ./config.sh --url https://github.com/molettalm/HH_AVR --token ${{ secrets.ACTIONS_RUNNER_TOKEN }} --unattended
+            sudo ./svc.sh install
+            sudo ./svc.sh start
+            exit 0
+          else
+            echo "Runner is already configured. "
+            sudo ./svc.sh stop
+            sudo ./svc.sh start
+            
+          fi
+         fi
+        ENDSSH
+      
+
+
+
+        
