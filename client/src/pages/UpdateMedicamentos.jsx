@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie'; // Import js-cookie library
+
 
 class UpdateMedicamentos extends Component {
 
@@ -22,6 +24,7 @@ class UpdateMedicamentos extends Component {
 		const requestOptions = {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include'
 		};
 		
 		fetch('http://localhost:3000/medicines/' + id, requestOptions)
@@ -53,21 +56,19 @@ class UpdateMedicamentos extends Component {
 		const id = href.match(/\/([^\/]+)$/)[1];
 
 		const medicine = {
-			username: localStorage.getItem('username'),
+			username: Cookies.get('username'),
 			medicine_name: this.state.medicine_name,
 			period: parseInt(this.state.period),
 			first_intake: this.state.first_intake
 		};
 
-		const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-
 		fetch('http://localhost:3000/medicines/update/' + id, {
 			method: 'POST',
 			headers: { 
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${token}` // Include the token in the request headers
 			},
-			body: JSON.stringify(medicine)
+			body: JSON.stringify(medicine),
+			credentials: 'include'
 		})
 		.then(() => {
 			setTimeout(() => { window.location.replace('/#/medicamentos'); }, 100);

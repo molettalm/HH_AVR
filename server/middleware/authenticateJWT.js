@@ -2,12 +2,7 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'super-secret-key';
 
 const authenticateJWT = (req, res, next) => {
-    const authHeader = req.header('Authorization');
-    if (!authHeader) {
-        return res.status(403).json({ error: 'A token is required for authentication' });
-    }
-
-    const token = authHeader.split(' ')[1];
+    const token = req.cookies.token; // Retrieve token from cookies
     if (!token) {
         return res.status(403).json({ error: 'A token is required for authentication' });
     }

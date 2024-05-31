@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie'; // Import js-cookie library
+
 
 class AddMedicamentos extends Component {
 
@@ -21,21 +23,19 @@ class AddMedicamentos extends Component {
 		e.preventDefault();
 
 		const medicine = {
-			username: localStorage.getItem('username'),
+			username: Cookies.get('username'),
 			medicine_name: this.state.medicine_name,
 			period: parseInt(this.state.period),
 			first_intake: this.state.first_intake
 		};
 
-		const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-
 		fetch('http://localhost:3000/medicines/add', {
 			method: 'POST',
 			headers: { 
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${token}` // Include the token in the request headers
 			},
-			body: JSON.stringify(medicine)
+			body: JSON.stringify(medicine),
+			credentials: 'include'
 		})
 		.then(() => {
 			setTimeout(() => { window.location.replace('/#/medicamentos'); }, 100);

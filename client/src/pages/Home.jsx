@@ -1,9 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FcLike } from 'react-icons/fc';
+import Cookies from 'js-cookie';
 
 class Home extends React.Component {
     render() {
+        // Check if user and token cookies exist
+        const userCookie = Cookies.get('username');
+
+        // Conditionally render the login button
+        const loginButton = userCookie ? (
+            <Link to="/resumo" className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2.5">
+                Entrar
+            </Link>
+        ) : (
+            <Link to="/login" className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2.5">
+                Entrar
+            </Link>
+        );
+
         return (
             <div className="flex flex-col h-screen">
                 {/* Header */}
@@ -17,9 +32,7 @@ class Home extends React.Component {
                             <Link to="/register" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5">
                                 Crie uma conta
                             </Link>
-                            <Link to="/login" className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2.5">
-                                Login
-                            </Link>
+                            {loginButton}
                         </nav>
                     </div>
                 </header>
