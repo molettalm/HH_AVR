@@ -132,6 +132,13 @@ resource "aws_s3_bucket_policy" "hh_bucket_policy" {
   })
 }
 
+resource "null_resource" "status" {
+    provisioner "local-exec" {
+        command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.hh_ec2.id}"
+    }
+    depends_on = [aws_instance.hh_ec2]
+}
+
 
 output "ec2_instance_public_ip" {
   value = aws_instance.hh_ec2.public_ip
