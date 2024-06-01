@@ -136,7 +136,7 @@ resource "null_resource" "status" {
     provisioner "local-exec" {
         command = "echo Waiting for instance ${aws_instance.hh_ec2.id} to be 'status-ok' && aws ec2 wait instance-status-ok --instance-ids ${aws_instance.hh_ec2.id} --region us-east-1"
     }
-    depends_on = [aws_instance.hh_ec2]
+    depends_on = [aws_ec2_instance_state.test]
 }
 
 
