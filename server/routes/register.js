@@ -28,16 +28,29 @@ router.route('/').post(async (req, res) => {
         // Generate a token for the new user
         const token = jwt.sign({ userId: newUser._id }, SECRET_KEY, { expiresIn: '1h' });
 
-        res.status(200).json({ message: 'User created successfully', token });
+        // Set HttpOnly cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true, // Use secure flag in production
+            maxAge: 60 * 60 * 1000 // 1 hour
+        });
+
+        // Set username in the cookie
+        res.cookie('username', newUser.username, {
+            httpOnly: false, // Allow client-side access to username cookie
+            secure: false, // Use secure flag in production
+            maxAge: 60 * 60 * 1000 // 1 hour
+        });
+
+        res.status(200).json({ message: 'User created successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error: ' + error.message });
     }
 });
 
-//GET Registered Users
-router.get('/', async (req, res) => {
+router.route('/').get(async (req, res) => {
     try {
-        const users = await User.find()
+        const users = await User.find();
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ error: 'Unable to get users' });

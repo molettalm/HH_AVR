@@ -1,21 +1,33 @@
-import React from 'react'
-import classNames from 'classnames'
-import { Link, useLocation } from 'react-router-dom'
-import { FcLike } from 'react-icons/fc'
-import { HiOutlineLogout } from 'react-icons/hi'
-import { SIDEBAR_LINKS, SIDEBAR_BOTTOM_LINKS } from '../../lib/constants'
+import React from 'react';
+import classNames from 'classnames';
+import { Link, useLocation } from 'react-router-dom';
+import { FcLike } from 'react-icons/fc';
+import { HiOutlineLogout } from 'react-icons/hi';
+import { SIDEBAR_LINKS, SIDEBAR_BOTTOM_LINKS } from '../../lib/constants';
+
+const appApiUrl = process.env.REACT_APP_API_URL;
 
 const linkClass =
-    'flex items-center gap-2 font-light px-3 py-2 hover:bg-neutral-700 hover:no-underline active:bg-neutral-600 rounded-sm text-base'
+    'flex items-center gap-2 font-light px-3 py-2 hover:bg-neutral-700 hover:no-underline active:bg-neutral-600 rounded-sm text-base';
 
 export default function Sidebar() {
 
     const handleLogout = () => {
-        // Remove token and username from local storage
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        // Redirect to login page or any other desired route
-        window.location.replace('/#/');
+        fetch(`${appApiUrl}/logout`, {
+            method: 'POST',
+            credentials: 'include', // Include credentials (cookies)
+        })
+        .then(response => {
+            if (response.ok) {
+                // Redirect to login page or any other desired route
+                window.location.replace('/#/');
+            } else {
+                throw new Error('Failed to logout.');
+            }
+        })
+        .catch(error => {
+            console.error('Error during logout:', error);
+        });
     };
 
     return (
@@ -41,11 +53,11 @@ export default function Sidebar() {
                 </button>
             </div>
         </div>
-    )
+    );
 }
 
 function SidebarLink({ link }) {
-    const { pathname } = useLocation()
+    const { pathname } = useLocation();
 
     return (
         <Link
@@ -55,5 +67,5 @@ function SidebarLink({ link }) {
             <span className="text-xl">{link.icon}</span>
             {link.label}
         </Link>
-    )
+    );
 }

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie'; // Import js-cookie library
+
 
 const appApiUrl = process.env.REACT_APP_API_URL;
 
@@ -8,6 +10,7 @@ class UpdateMedicamentos extends Component {
 	constructor(props) {
 		super(props);
 
+        // Initialize state
 		this.state = {
 			username: '',
 			medicine_name: '',
@@ -16,6 +19,7 @@ class UpdateMedicamentos extends Component {
 		};
 	}
 
+    // Fetch medicine data when component mounts
 	componentDidMount() {
 		const href = window.location.href;
 		const id = href.match(/\/([^\/]+)$/)[1];
@@ -23,6 +27,7 @@ class UpdateMedicamentos extends Component {
 		const requestOptions = {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include'
 		};
 		
 		fetch(`${appApiUrl}/medicines/`+id, requestOptions)
@@ -40,11 +45,13 @@ class UpdateMedicamentos extends Component {
 			});
 	}
 
+    // Handle input changes
 	onChange = (e) => {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
 	}
 
+    // Handle form submission
 	onSubmit = (e) => {
 		e.preventDefault();
 
@@ -52,21 +59,19 @@ class UpdateMedicamentos extends Component {
 		const id = href.match(/\/([^\/]+)$/)[1];
 
 		const medicine = {
-			username: localStorage.getItem('username'),
+			username: Cookies.get('username'),
 			medicine_name: this.state.medicine_name,
 			period: parseInt(this.state.period),
 			first_intake: this.state.first_intake
 		};
 
-		const token = localStorage.getItem('token');
-
 		fetch(`${appApiUrl}/medicines/update/`+id, {
 			method: 'POST',
 			headers: { 
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${token}` // Include the token in the request headers
 			},
-			body: JSON.stringify(medicine)
+			body: JSON.stringify(medicine),
+			credentials: 'include'
 		})
 		.then(() => {
 			setTimeout(() => { window.location.replace('/#/medicamentos'); }, 100);

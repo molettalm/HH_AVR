@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 const appApiUrl = process.env.REACT_APP_API_URL;
 
 class Register extends Component {
-
     constructor(props) {
         super(props);
 
@@ -21,7 +20,7 @@ class Register extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         e.preventDefault();
 
         const user = {
@@ -30,31 +29,30 @@ class Register extends Component {
             password: this.state.password
         };
 
-        fetch(`${appApiUrl}/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.token) {
-                // If registration is successful and a token is returned
-                window.localStorage.setItem("token", data.token); // Store the token in local storage
-                localStorage.setItem("username", this.state.username);
-                this.setState({ success: true, error: '' });
-                window.location.replace('/#/resumo'); // Redirect to homepage or any other page
-            } else {
-                this.setState({ error: data.error || 'Failed to register.' }); // Access 'error' from data
+        try {
+            const response = await fetch(`${appApiUrl}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Include credentials (cookies)
+                body: JSON.stringify(user)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to register.');
             }
-        })
-        .catch((error) => {
+
+            this.setState({ success: true, error: '' });
+            window.location.replace('/#/info'); // Redirect to homepage or any other page
+        } catch (error) {
             console.log(error);
-            this.setState({ error: 'Failed to register.' });
-        });
+            this.setState({ error: error.message });
+        }
     };
 
     render() {
-        const { error, success } = this.state;
+        const { error, success, username, email, password } = this.state;
         return (
             <div className="flex items-center justify-center h-screen bg-gray-100">
                 <div className="bg-white shadow-lg rounded-lg p-8">
@@ -65,21 +63,47 @@ class Register extends Component {
                         <div className="grid gap-6 mb-6 md:grid-cols-1">
                             <div>
                                 <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nome de usuário</label>
-                                <input type="text" id="username" name="username" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                                value={this.state.username} onChange={this.onChange}/>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    required
+                                    value={username}
+                                    onChange={this.onChange}
+                                />
                             </div>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">E-mail</label>
-                                <input type="text" id="email" name="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                                value={this.state.email} onChange={this.onChange}/>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    required
+                                    value={email}
+                                    onChange={this.onChange}
+                                />
                             </div>
                             <div>
                                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Senha</label>
-                                <input type="password" id="password" name="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                                value={this.state.password} onChange={this.onChange}/>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    required
+                                    value={password}
+                                    onChange={this.onChange}
+                                />
                             </div>
                         </div>
-                        <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrar</button>
+                        <button
+                            type="submit"
+                            className="w-full text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                        >
+                            Criar Conta
+                        </button>
                     </form>
                     <p className="mt-2">
                        Já possui uma conta? <Link to={"/login"}>Login</Link>

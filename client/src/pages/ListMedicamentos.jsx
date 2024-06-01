@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Import js-cookie library
 
 
 const appApiUrl = process.env.REACT_APP_API_URL;
@@ -24,15 +25,14 @@ class ListMedicamentos extends Component {
 	}
 
 	componentDidMount() {
-        const token = localStorage.getItem('token'); // Get the token from local storage
-		const username = localStorage.getItem('username');
+		const username = Cookies.get('username'); // Get the username from cookies
 
 		const requestOptions = {
 			method: 'GET',
 			headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Add authorization header with token
             },
+			credentials: 'include'
 		};
 
 		fetch(`${appApiUrl}/medicines?username=${username}`, requestOptions)
@@ -46,17 +46,16 @@ class ListMedicamentos extends Component {
 	}
 
 	deleteMedicine = (id) => {
-        const token = localStorage.getItem('token'); // Get the token from local storage
 
 		const requestOptions = {
 			method: 'DELETE',
 			headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Add authorization header with token
             },
+			credentials: 'include'
 		};
 
-		fetch(`${appApiUrl}/medicines/` + id, requestOptions)
+		fetch(`${appApiUrl}/medicines/` + id , requestOptions)
 			.then(() => {
 				// Filter out the deleted medicine from the state
 				this.setState({
