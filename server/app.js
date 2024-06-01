@@ -50,7 +50,7 @@ app.use('/feed', feedRoutes);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/exercises', exercisesRouter);
-app.use('/infos', infoRouter);
+app.use('/info', infoRouter);
 app.use('/dailies', dailiesRouter);
 app.use('/medicines', authenticateJWT, medicinesRouter); // Protect medicines route
 app.use('/logout', authenticateJWT, logoutRouter);

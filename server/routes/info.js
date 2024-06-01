@@ -5,7 +5,8 @@ const authenticateJWT = require('../middleware/authenticateJWT');
 router.use(authenticateJWT);
 
 router.route('/').get((req, res) => {
-    Info.find()
+    const { username } = req.query; // Extract the username from the query parameters
+    Info.find({ username })
         .then(infos => res.json(infos))
         .catch(err => res.status(400).json('Error: ' + err));
 });

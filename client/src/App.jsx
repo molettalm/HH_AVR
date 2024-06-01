@@ -9,7 +9,8 @@ import UpdateMedicamentos from './pages/UpdateMedicamentos';
 import AddMedicamentos from './pages/AddMedicamentos';
 import Metricas from './pages/Metricas';
 import Configuracoes from './pages/Configuracoes';
-import Home from './pages/Home'; // Import the Home component
+import Home from './pages/Home';
+import RegisterInfo from './pages/RegisterInfo';
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                 <Route path="/" element={<Home />} /> {/* Home route without Layout */}
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/info" element={<RegisterInfo />} />
                 <Route path="/" element={<Layout />}>
                     <Route path="resumo" element={<Resumo />} />
                     <Route path="exercicios" element={<Exercicios />} />

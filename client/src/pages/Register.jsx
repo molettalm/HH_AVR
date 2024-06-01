@@ -44,7 +44,7 @@ class Register extends Component {
             }
 
             this.setState({ success: true, error: '' });
-            window.location.replace('/#/resumo'); // Redirect to homepage or any other page
+            window.location.replace('/#/info'); // Redirect to homepage or any other page
         } catch (error) {
             console.log(error);
             this.setState({ error: error.message });
@@ -104,9 +104,6 @@ class Register extends Component {
                         >
                             Criar Conta
                         </button>
-                        <p className="text-sm font-light text-gray-500 dark:text-gray-400 mt-3">
-                            Já tem uma conta? <Link to="/login" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Login</Link>
-                        </p>
                     </form>
                     <p className="mt-2">
                        Já possui uma conta? <Link to={"/login"}>Login</Link>
