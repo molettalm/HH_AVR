@@ -32,13 +32,15 @@ router.route('/').post(async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: true, // Use secure flag in production
+            sameSite: 'none',
             maxAge: 60 * 60 * 1000 // 1 hour
         });
 
         // Set username in the cookie
         res.cookie('username', newUser.username, {
             httpOnly: false, // Allow client-side access to username cookie
-            secure: false, // Use secure flag in production
+            secure: true, // Use secure flag in production
+            sameSite: 'none',
             maxAge: 60 * 60 * 1000 // 1 hour
         });
 
