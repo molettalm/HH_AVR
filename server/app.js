@@ -41,7 +41,14 @@ mongoose
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
 app.use(cors({
-    origin: 'http://localhost:8080', // Adjust to your frontend URL
+    origin: function (origin, callback) {
+        if (!origin) { // Allow requests with no origin (like mobile apps or curl requests)
+            callback(null, true);
+        } else {
+            // Reflect the origin of the request
+            callback(null, origin);
+        }
+    }, // Adjust to your frontend URL
     credentials: true // Allow credentials (cookies)
 }));
 
