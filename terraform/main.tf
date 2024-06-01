@@ -143,6 +143,7 @@ resource "null_resource" "status" {
 output "ec2_instance_public_ip" {
   value = aws_instance.hh_ec2.public_ip
   description = "The public IP of the EC2 instance"
+  depends_on = [null_resource.status]
 }
 
 output "website_endpoint" {
