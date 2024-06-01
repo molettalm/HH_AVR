@@ -140,11 +140,19 @@ resource "null_resource" "status" {
 }
 
 
-output "ec2_instance_public_ip" {
-  value = aws_instance.hh_ec2.public_ip
-  description = "The public IP of the EC2 instance"
-  depends_on = [null_resource.status]
+data "aws_instance" "example" {
+  instance_id = aws_instance.hh_ec2.id
+
+  depends_on = [
+    null_resource.status
+  ]
 }
+
+output "ec2_instance_public_ip" {
+  value = data.aws_instance.example.public_ip
+  description = "The public IP of the EC2 instance"
+}
+
 
 output "website_endpoint" {
   description = "The DNS name of the website."
