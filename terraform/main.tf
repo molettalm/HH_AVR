@@ -71,6 +71,11 @@ resource "aws_instance" "hh_ec2" {
   }
 }
 
+resource "aws_ec2_instance_state" "test" {
+  instance_id = aws_instance.hh_ec2.id
+  state       = "running"
+}
+
 resource "aws_s3_bucket" "hh_bucket" {
   bucket = "hhubportal" # Make sure this is globally unique
   
