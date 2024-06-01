@@ -134,7 +134,7 @@ resource "aws_s3_bucket_policy" "hh_bucket_policy" {
 
 resource "null_resource" "status" {
     provisioner "local-exec" {
-        command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.hh_ec2.id}"
+        command = "echo Waiting for instance ${aws_instance.hh_ec2.id} to be 'status-ok' && aws ec2 wait instance-status-ok --instance-ids ${aws_instance.hh_ec2.id} --region us-east-1"
     }
     depends_on = [aws_instance.hh_ec2]
 }
