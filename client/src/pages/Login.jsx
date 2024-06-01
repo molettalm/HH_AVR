@@ -19,7 +19,7 @@ class Login extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         console.log(`${appApiUrl}/login`);
         e.preventDefault();
 
@@ -39,8 +39,6 @@ class Login extends Component {
             if (!response.ok) {
                 throw new Error('Failed to login.');
             }
-
-            const data = await response.json();
 
             // Assuming the backend sets the cookies correctly, you don't need to handle cookies here
             // Update state to indicate successful login
