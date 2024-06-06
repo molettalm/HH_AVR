@@ -68,12 +68,6 @@ resource "aws_instance" "hh_ec2" {
     sudo yum update -y
     sudo yum install -y python3-pip libicu docker
     rm -rf $HOME/.nvm
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    source ~/.bashrc
-    nvm install --lts
-    if [ ! -d "server" ]; then
-      mkdir server
-    fi
     EOL
 }
 
