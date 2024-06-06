@@ -28,7 +28,7 @@ resource "aws_security_group" "hh_ec2_security_group" {
 
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_httpss" {
+resource "aws_vpc_security_group_ingress_rule" "allow_https" {
   security_group_id = aws_security_group.hh_ec2_security_group.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
@@ -37,7 +37,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_httpss" {
 }
 
 
-resource "aws_vpc_security_group_ingress_rule" "allow_https" {
+resource "aws_vpc_security_group_ingress_rule" "allow_http" {
   security_group_id = aws_security_group.hh_ec2_security_group.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 80
@@ -72,12 +72,6 @@ resource "aws_instance" "hh_ec2" {
     volume_size = 8 # 8GB
   }
 
-  user_data = <<-EOL
-    #!/bin/bash -xe
-    sudo yum update -y
-    sudo yum install -y python3-pip libicu docker
-    rm -rf $HOME/.nvm
-    EOL
 }
 
 resource "aws_ec2_instance_state" "test" {
