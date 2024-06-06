@@ -62,6 +62,19 @@ resource "aws_instance" "hh_ec2" {
   root_block_device {
     volume_size = 8 # 8GB
   }
+
+  user_data = <<-EOL
+    #!/bin/bash -xe
+    sudo yum update -y
+    sudo yum install -y python3-pip libicu docker
+    rm -rf $HOME/.nvm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    source ~/.bashrc
+    nvm install --lts
+    if [ ! -d "server" ]; then
+      mkdir server
+    fi
+    EOL
 }
 
 resource "aws_ec2_instance_state" "test" {
