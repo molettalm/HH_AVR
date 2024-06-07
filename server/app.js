@@ -65,10 +65,10 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 // Security headers
-app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests');
+//   next();
+// });
 
 // Routes
 app.use('/feed', feedRoutes);
