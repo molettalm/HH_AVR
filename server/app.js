@@ -49,25 +49,15 @@ app.use(cookieParser()); // Use cookie-parser middleware
 //   }).allowedMethods("GET", "POST", "PUT", "DELETE"));
 
 
-app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  }));
-
-
-app.options('*', (req, res) => {
+app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://hhub.life');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(204);
-  });
+    next();
+});
+
+
 // Routes
 app.use('/feed', feedRoutes);
 app.use('/register', registerRouter);
