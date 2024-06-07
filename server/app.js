@@ -42,10 +42,26 @@ mongoose
 
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
+
+// app.use(cors({
+//     origin: 'https://hhub.life',
+//     credentials: true
+//   }).allowedMethods("GET", "POST", "PUT", "DELETE"));
+
+
 app.use(cors({
-    origin: 'https://hhub.life',
-    credentials: true
-  }).allowedMethods("GET", "POST", "PUT", "DELETE"));
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  }));
   
 
 
