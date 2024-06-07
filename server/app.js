@@ -39,12 +39,18 @@ mongoose
     console.log('Unable to connect to Server and/or MongoDB', error)
 })
 
+
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
 app.use(cors({
     origin: 'https://hhub.life',
     credentials: true
   }));
+
+app.options('*', cors({
+    origin: 'https://hhub.life',
+    credentials: true
+}));  
 
 // Routes
 app.use('/feed', feedRoutes);
