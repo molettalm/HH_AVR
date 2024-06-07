@@ -85,6 +85,6 @@ jobs:
           ECR_REGISTRY: 365247921391.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: hh-dockers
           IMAGE_TAG: server
-        run: sudo docker run -d --restart always -p 8080:8080 --name hhserver $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        run: sudo docker run -d --restart always -p 443:8080 --name hhserver $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
