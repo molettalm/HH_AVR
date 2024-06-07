@@ -20,6 +20,7 @@ const app = express();
 
 app.set('port', process.env.PORT || 3000);
 
+const allowedOrigins = ['https://d1pri0s4hbaibs.cloudfront.net','https://hhub.life','https://www.hhub.life'];
 // connect to mongoDB
 const dbURI = process.env.MONGODB_URI;
 
@@ -42,13 +43,16 @@ app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin) { // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) {
+            callback(null, true);
+        } else if (allowedOrigins.indexOf(origin) !== -1) {
+            // Allow requests from the allowed origins
             callback(null, true);
         } else {
-            // Reflect the origin of the request
-            callback(null, origin);
+            // Reject requests from other origins
+            callback(new Error('Not allowed by CORS'));
         }
-    }, // Adjust to your frontend URL
+    },
     credentials: true // Allow credentials (cookies)
 }));
 
