@@ -54,7 +54,7 @@ app.options('*', cors({
 
 app.use((req, res, next) => {
     // Add custom headers here
-    res.setHeader('Access-Control-Allow-Origin ', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     next();
   });
 
