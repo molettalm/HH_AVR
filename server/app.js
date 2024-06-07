@@ -45,7 +45,7 @@ app.use(cookieParser()); // Use cookie-parser middleware
 app.use(cors({
     origin: 'https://hhub.life',
     credentials: true
-  }));
+  }).allowedMethods("GET", "POST", "PUT", "DELETE"));
   
 
 
