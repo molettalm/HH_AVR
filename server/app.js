@@ -42,19 +42,9 @@ mongoose
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin) {
-            callback(null, true);
-        } else if (allowedOrigins.indexOf(origin) !== -1) {
-            // Allow requests from the allowed origins
-            callback(null, true);
-        } else {
-            // Reject requests from other origins
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true // Allow credentials (cookies)
-}));
+    origin: 'https://hhub.life',
+    credentials: true
+  }));
 
 // Routes
 app.use('/feed', feedRoutes);
