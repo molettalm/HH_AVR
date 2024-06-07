@@ -63,7 +63,21 @@ app.use(cors({
     optionsSuccessStatus: 204
   }));
 
-  
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigins.join(', '));
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
+app.options('*', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigins.join(', '));
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(204);
+});
 
 
 // Routes
@@ -76,5 +90,5 @@ app.use('/dailies', dailiesRouter);
 app.use('/medicines', authenticateJWT, medicinesRouter); // Protect medicines route
 app.use('/logout', authenticateJWT, logoutRouter);
 
-app.options('*', cors());
+
 module.exports = app;
