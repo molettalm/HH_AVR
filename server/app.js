@@ -39,23 +39,36 @@ mongoose
     console.log('Unable to connect to Server and/or MongoDB', error)
 })
 
-
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
 
-app.use(cors({
-    credentials: true
-  }));
+// Enhanced CORS configuration with debugging
 
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log('Origin:', origin); // Debugging log
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
+  optionsSuccessStatus: 204
+};
 
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', 'https://hhub.life');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//     res.setHeader('Access-Control-Allow-Credentials', 'true');
-//     next();
-// });
+app.use(cors(corsOptions));
 
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests');
+  next();
+});
 
 // Routes
 app.use('/feed', feedRoutes);
@@ -66,6 +79,5 @@ app.use('/info', infoRouter);
 app.use('/dailies', dailiesRouter);
 app.use('/medicines', authenticateJWT, medicinesRouter); // Protect medicines route
 app.use('/logout', authenticateJWT, logoutRouter);
-
 
 module.exports = app;
