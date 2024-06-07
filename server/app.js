@@ -52,6 +52,12 @@ app.options('*', cors({
     credentials: true
 }));  
 
+app.use((req, res, next) => {
+    // Add custom headers here
+    res.setHeader('Access-Control-Allow-Origin ', '*');
+    next();
+  });
+
 // Routes
 app.use('/feed', feedRoutes);
 app.use('/register', registerRouter);
