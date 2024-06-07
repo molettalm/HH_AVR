@@ -25,6 +25,9 @@ router.route('/').post(async (req, res) => {
         // Save the new user
         await newUser.save();
 
+        // Generate a token for the new user
+        const token = jwt.sign({ userId: newUser._id }, SECRET_KEY, { expiresIn: '1h' });
+
         // Set HttpOnly cookie
         res.cookie('token', token, {
             httpOnly: true,
@@ -40,9 +43,6 @@ router.route('/').post(async (req, res) => {
             sameSite: 'none',
             maxAge: 60 * 60 * 1000 // 1 hour
         });
-
-        // Generate a token for the new user
-        const token = jwt.sign({ userId: newUser._id }, SECRET_KEY, { expiresIn: '1h' });
 
         res.status(200).json({ message: 'User created successfully' });
     } catch (error) {
