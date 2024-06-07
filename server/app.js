@@ -62,6 +62,7 @@ app.use(cors({
     preflightContinue: false,
     optionsSuccessStatus: 204
   }));
+
   
 
 
@@ -75,4 +76,5 @@ app.use('/dailies', dailiesRouter);
 app.use('/medicines', authenticateJWT, medicinesRouter); // Protect medicines route
 app.use('/logout', authenticateJWT, logoutRouter);
 
+app.options('*', cors());
 module.exports = app;
