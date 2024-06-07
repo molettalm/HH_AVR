@@ -60,11 +60,14 @@ app.use(cors({
     credentials: true,
   }));
 
-res.setHeader('Access-Control-Allow-Origin', 'https://hhub.life');
-res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-res.setHeader('Access-Control-Allow-Credentials', 'true');
 
+app.options('*', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://hhub.life');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(204);
+  });
 // Routes
 app.use('/feed', feedRoutes);
 app.use('/register', registerRouter);
