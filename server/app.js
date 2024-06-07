@@ -43,19 +43,18 @@ mongoose
 app.use(bodyParser.json());
 app.use(cookieParser()); // Use cookie-parser middleware
 
-// app.use(cors({
-//     origin: 'https://hhub.life',
-//     credentials: true
-//   }).allowedMethods("GET", "POST", "PUT", "DELETE"));
+app.use(cors({
+    credentials: true
+  }));
 
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://hhub.life');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    next();
-});
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', 'https://hhub.life');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+//     res.setHeader('Access-Control-Allow-Credentials', 'true');
+//     next();
+// });
 
 
 // Routes
