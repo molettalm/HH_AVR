@@ -46,17 +46,8 @@ app.use(cors({
     origin: 'https://hhub.life',
     credentials: true
   }));
+  
 
-app.options('*', cors({
-    origin: 'https://hhub.life',
-    credentials: true
-}));  
-
-app.use((req, res, next) => {
-    // Add custom headers here
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    next();
-  });
 
 // Routes
 app.use('/feed', feedRoutes);

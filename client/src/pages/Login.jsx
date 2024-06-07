@@ -31,7 +31,7 @@ class Login extends Component {
         try {
             const response = await fetch(`${appApiUrl}/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://hhub.life' },
                 body: JSON.stringify(user),
                 credentials: 'include' // Ensure cookies are included in the request
             });
