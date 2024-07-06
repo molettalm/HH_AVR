@@ -12,7 +12,8 @@ router.route('/add').post((req, res) => {
     const username = req.body.username;
     const weight = Number(req.body.weight);
     const hours_of_sleep = Number(req.body.hours_of_sleep);
-    const blood_pressure = Number(req.body.blood_pressure);
+    const blood_pressure_high = Number(req.body.blood_pressure_high);
+    const blood_pressure_low = Number(req.body.blood_pressure_low);
     const blood_sugar = Number(req.body.blood_sugar);
     const calories_consumed = Number(req.body.calories_consumed);
 
@@ -20,7 +21,8 @@ router.route('/add').post((req, res) => {
         username,
         weight,
         hours_of_sleep,
-        blood_pressure,
+        blood_pressure_high,
+        blood_pressure_low,
         blood_sugar,
         calories_consumed,
     });
@@ -48,7 +50,8 @@ router.route('/update/:id').post((req, res) => {
             daily.username = req.body.username;
             daily.weight = Number(req.body.weight);
             daily.hours_of_sleep = Number(req.body.hours_of_sleep);
-            daily.blood_pressure = Number(req.body.blood_pressure);
+            daily.blood_pressure_high = Number(req.body.blood_pressure_high);
+            daily.blood_pressure_low = Number(req.body.blood_pressure_low);
             daily.blood_sugar = Number(req.body.blood_sugar);
             daily.calories_consumed = Number(req.body.calories_consumed);
 

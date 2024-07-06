@@ -5,11 +5,13 @@ import Login from './pages/register-login/Login';
 import ListExercicios from './pages/exercises/ListExercicios';
 import UpdateExercicios from './pages/exercises/UpdateExercicios';
 import AddExercicios from './pages/exercises/AddExercicios';
-import Resumo from './pages/Resumo';
 import ListMedicamentos from './pages/medicines/ListMedicamentos';
 import UpdateMedicamentos from './pages/medicines/UpdateMedicamentos';
 import AddMedicamentos from './pages/medicines/AddMedicamentos';
-import Metricas from './pages/metrics/UpdateMetricas';
+import ListMetricas from './pages/metrics/ListMetricas';
+import UpdateMetricas from './pages/metrics/UpdateMetricas';
+import AddMetricas from './pages/metrics/AddMetricas';
+import Resumo from './pages/Resumo';
 import Configuracoes from './pages/Configuracoes';
 import Home from './pages/Home';
 import RegisterInfo from './pages/register-login/RegisterInfo';
@@ -30,7 +32,9 @@ function App() {
                     <Route path="medicamentos" element={<ListMedicamentos />} />
                     <Route path="medicamentos/edit/:id" element={<UpdateMedicamentos />} />
                     <Route path="medicamentos/adicionar" element={<AddMedicamentos />} />
-                    <Route path="metricas" element={<Metricas />} />
+                    <Route path="metricas" element={<ListMetricas />} />
+                    <Route path="metricas/edit/:id" element={<UpdateMetricas />} />
+                    <Route path="metricas/adicionar" element={<AddMetricas />} />
                     <Route path="configuracoes" element={<Configuracoes />} />
                 </Route>
             </Routes>

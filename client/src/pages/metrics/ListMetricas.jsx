@@ -1,109 +1,110 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Import js-cookie library
-
+import Cookies from 'js-cookie';
 
 // const appApiUrl = process.env.REACT_APP_API_URL;
 const appApiUrl = "http://localhost:3000";
 
-const Medicine = props => (
+const Metricas = props => (
     <tr>
-        <td>{props.medicine.medicine_name}</td>
-        <td>{props.medicine.period}</td>
-        <td>{`${props.medicine.first_intake.substring(0, 10)} ${props.medicine.first_intake.substring(11, 16)}`}</td>
+        <td>{props.metricas.weight} Kg</td>
+        <td>{props.metricas.hours_of_sleep} h</td>
+        <td>{props.metricas.blood_pressure_high} mmHg</td>
+		<td>{props.metricas.blood_pressure_low} mmHg</td>
+        <td>{props.metricas.blood_sugar} mg/dL</td>
+        <td>{props.metricas.calories_consumed} kcal</td>
         <td>
-            <Link to={"/medicamentos/edit/"+props.medicine._id}>Editar</Link> | <a href="#" onClick={(e) => {e.preventDefault(); props.deleteMedicine(props.medicine._id)}}>Deletar</a>
+            <Link to={"/metricas/edit/" + props.metricas._id}>Editar</Link> | <a href="#" onClick={(e) => { e.preventDefault(); props.deleteMetricas(props.metricas._id) }}>Deletar</a>
         </td>
     </tr>
 );
 
-console.log(`${appApiUrl}/login`);
+class ListMetricas extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { metricas: [] };
+    }
 
-class ListMedicamentos extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { medicines: [] };
-	}
+    componentDidMount() {
+        const username = Cookies.get('username');
 
-	componentDidMount() {
-		const username = Cookies.get('username'); // Get the username from cookies
-
-		const requestOptions = {
-			method: 'GET',
-			headers: { 
+        const requestOptions = {
+            method: 'GET',
+            headers: {
                 'Content-Type': 'application/json',
             },
-			credentials: 'include'
-		};
+            credentials: 'include'
+        };
 
-		fetch(`${appApiUrl}/medicines?username=${username}`, requestOptions)
-			.then(response => response.json())
-			.then(data => {
-				this.setState({ medicines: data })
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	}
+        fetch(`${appApiUrl}/dailies?username=${username}`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ metricas: data })
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
-	deleteMedicine = (id) => {
-
-		const requestOptions = {
-			method: 'DELETE',
-			headers: { 
+    deleteMetricas = (id) => {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
                 'Content-Type': 'application/json',
             },
-			credentials: 'include'
-		};
+            credentials: 'include'
+        };
 
-		fetch(`${appApiUrl}/medicines/` + id , requestOptions)
-			.then(() => {
-				// Filter out the deleted medicine from the state
-				this.setState({
-					medicines: this.state.medicines.filter(el => el._id !== id)
-				});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	}
+        fetch(`${appApiUrl}/dailies/` + id, requestOptions)
+            .then(() => {
+                this.setState({
+                    metricas: this.state.metricas.filter(el => el._id !== id)
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
-	medicinesList() {
-		return this.state.medicines.map(currentmedicine => {
-			return <Medicine medicine={currentmedicine} deleteMedicine={this.deleteMedicine} key={currentmedicine._id} />;
-		});
-	}
+    metricasList() {
+        return this.state.metricas.map(currentMetricas => {
+            return <Metricas metricas={currentMetricas} deleteMetricas={this.deleteMetricas} key={currentMetricas._id} />;
+        });
+    }
 
-	goToAddMedicinePage = () => {
-		window.location.replace('/#/medicamentos/adicionar');
-	}
+    goToAddMetricasPage = () => {
+        window.location.replace('/#/metricas/adicionar');
+    }
 
-	render() {
-		return (
-			<div>
-				<table className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg mb-4">
-					<thead>
-						<tr>
-							<th className="p-2.5">Nome do Remédio</th>
-							<th className="p-2.5">Período (em horas)</th>
-							<th className="p-2.5">Primeira Dose</th>
-							<th className="p-2.5">Ações</th>
-						</tr>
-					</thead>
-					<tbody>
-						{this.medicinesList()}
-					</tbody>
-				</table>
-				<button
-					type="button"
-					onClick={this.goToAddMedicinePage}
-					className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-				>
-					Adicionar Medicamento
-				</button>
-			</div>
-		);
-	}
+    render() {
+        return (
+            <div>
+                <table className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg mb-4">
+                    <thead>
+                        <tr>
+                            <th className="p-2.5">Peso</th>
+                            <th className="p-2.5">Horas de Sono</th>
+                            <th className="p-2.5">Pressão Arterial Sistólica</th>
+							<th className="p-2.5">Pressão Arterial Diastólica</th>
+                            <th className="p-2.5">Glicose</th>
+                            <th className="p-2.5">Calorias Consumidas</th>
+                            <th className="p-2.5">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.metricasList()}
+                    </tbody>
+                </table>
+                <button
+                    type="button"
+                    onClick={this.goToAddMetricasPage}
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                    Adicionar Métricas
+                </button>
+            </div>
+        );
+    }
 }
 
-export default ListMedicamentos;
+export default ListMetricas;
