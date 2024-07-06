@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
 
-const appApiUrl = process.env.REACT_APP_API_URL;
+// const appApiUrl = process.env.REACT_APP_API_URL;
+const appApiUrl = "http://localhost:3000";
 
 class Login extends Component {
     constructor(props) {

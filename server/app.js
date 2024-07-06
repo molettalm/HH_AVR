@@ -20,7 +20,7 @@ const app = express();
 
 app.set('port', process.env.PORT || 3000);
 
-const allowedOrigins = ['https://d1pri0s4hbaibs.cloudfront.net','https://hhub.life','https://www.hhub.life'];
+const allowedOrigins = ['https://d1pri0s4hbaibs.cloudfront.net','https://hhub.life','https://www.hhub.life', 'http://localhost:8080'];
 // connect to mongoDB
 const dbURI = process.env.MONGODB_URI;
 

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie'; // Import js-cookie library
 
-const appApiUrl = process.env.REACT_APP_API_URL;
+// const appApiUrl = process.env.REACT_APP_API_URL;
+const appApiUrl = "http://localhost:3000";;
 
 class RegisterInfo extends Component {
 

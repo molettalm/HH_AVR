@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie'; // Import js-cookie library
 
+// const appApiUrl = process.env.REACT_APP_API_URL;
+const appApiUrl = "http://localhost:3000";;
 
-const appApiUrl = process.env.REACT_APP_API_URL;
-
-
-class UpdateMedicamentos extends Component {
+class AddMedicamentos extends Component {
 
 	constructor(props) {
 		super(props);
 
-        // Initialize state
 		this.state = {
 			username: '',
 			medicine_name: '',
@@ -19,44 +17,12 @@ class UpdateMedicamentos extends Component {
 		};
 	}
 
-    // Fetch medicine data when component mounts
-	componentDidMount() {
-		const href = window.location.href;
-		const id = href.match(/\/([^\/]+)$/)[1];
-
-		const requestOptions = {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-			credentials: 'include'
-		};
-		
-		fetch(`${appApiUrl}/medicines/`+id, requestOptions)
-			.then(response => response.json())
-			.then(data => {
-				this.setState({
-					username: data.username,
-					medicine_name: data.medicine_name,
-					period: data.period,
-					first_intake: data.first_intake,
-				});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	}
-
-    // Handle input changes
 	onChange = (e) => {
-		const { name, value } = e.target;
-		this.setState({ [name]: value });
-	}
+		this.setState({ [e.target.name]: e.target.value });
+	};
 
-    // Handle form submission
 	onSubmit = (e) => {
 		e.preventDefault();
-
-		const href = window.location.href;
-		const id = href.match(/\/([^\/]+)$/)[1];
 
 		const medicine = {
 			username: Cookies.get('username'),
@@ -65,7 +31,7 @@ class UpdateMedicamentos extends Component {
 			first_intake: this.state.first_intake
 		};
 
-		fetch(`${appApiUrl}/medicines/update/`+id, {
+		fetch(`${appApiUrl}/medicines/add`, {
 			method: 'POST',
 			headers: { 
 				'Content-Type': 'application/json',
@@ -79,7 +45,7 @@ class UpdateMedicamentos extends Component {
 		.catch((error) => {
 			console.log(error);
 		});
-	}
+	};
 
 	render() {
 		return (
@@ -92,7 +58,7 @@ class UpdateMedicamentos extends Component {
 					</div>
 					<div>
 						<label htmlFor="period" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Período de Ingestão</label>
-						<select id="period-select" name="period" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required onChange={this.onChange} value={this.state.period}>
+						<select id="period-select" name="period" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required onChange={this.onChange}>
 							<option value="">--Por favor escolha uma opção--</option>
 							{[2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24].map(hours => (
 								<option key={hours} value={hours}>{hours} Horas</option>
@@ -107,10 +73,10 @@ class UpdateMedicamentos extends Component {
 						<p id="username" className="mt-2 text-sm text-gray-500 dark:text-gray-400">Selecione o dia e o horário da primeira dose</p>
 					</div>
 				</div>
-				<button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Atualizar Medicamento</button>
+				<button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrar Medicamento</button>
 			</form>
 		);
 	}
 }
 
-export default UpdateMedicamentos;
+export default AddMedicamentos;
