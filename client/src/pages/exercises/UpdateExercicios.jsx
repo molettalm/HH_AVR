@@ -33,12 +33,14 @@ class UpdateExercicios extends Component {
         fetch(`${appApiUrl}/exercises/` + id, requestOptions)
             .then(response => response.json())
             .then(data => {
+                const formattedDate = new Date(data.date).toISOString().split('T')[0];
+
                 this.setState({
                     username: data.username,
                     description: data.description,
                     duration: data.duration,
                     calories_burned: data.calories_burned,
-                    date: data.date
+                    date: formattedDate
                 });
             })
             .catch((error) => {
@@ -122,7 +124,7 @@ class UpdateExercicios extends Component {
                     <div>
                         <label htmlFor="date" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Data</label>
                         <input type="date" id="date" name="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required 
-                        value={this.state.date} onChange={this.onChange}/>
+                        value={this.state.date} readOnly/>
                         <p id="date" className="mt-2 text-sm text-gray-500 dark:text-gray-400">Selecione o dia e o horário que realizou o exercício</p>
                     </div>
                 </div>

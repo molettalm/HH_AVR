@@ -7,12 +7,12 @@ const appApiUrl = "http://localhost:3000";
 
 const Metricas = props => (
     <tr>
-        <td>{props.metricas.weight} Kg</td>
-        <td>{props.metricas.hours_of_sleep} h</td>
-        <td>{props.metricas.blood_pressure_high} mmHg</td>
-		<td>{props.metricas.blood_pressure_low} mmHg</td>
-        <td>{props.metricas.blood_sugar} mg/dL</td>
-        <td>{props.metricas.calories_consumed} kcal</td>
+        <td>{props.metricas.weight ? `${props.metricas.weight} Kg` : ''}</td>
+        <td>{props.metricas.hours_of_sleep ? `${props.metricas.hours_of_sleep} h` : ''}</td>
+        <td>{props.metricas.blood_pressure_high ? `${props.metricas.blood_pressure_high} mmHg` : ''}</td>
+        <td>{props.metricas.blood_pressure_low ? `${props.metricas.blood_pressure_low} mmHg` : ''}</td>
+        <td>{props.metricas.blood_sugar ? `${props.metricas.blood_sugar} mg/dL` : ''}</td>
+        <td>{props.metricas.calories_consumed ? `${props.metricas.calories_consumed} kcal` : ''}</td>
         <td>
             <Link to={"/metricas/edit/" + props.metricas._id}>Editar</Link> | <a href="#" onClick={(e) => { e.preventDefault(); props.deleteMetricas(props.metricas._id) }}>Deletar</a>
         </td>
