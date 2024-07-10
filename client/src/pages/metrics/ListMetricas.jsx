@@ -13,6 +13,7 @@ const Metricas = props => (
         <td>{props.metricas.blood_pressure_low ? `${props.metricas.blood_pressure_low} mmHg` : ''}</td>
         <td>{props.metricas.blood_sugar ? `${props.metricas.blood_sugar} mg/dL` : ''}</td>
         <td>{props.metricas.calories_consumed ? `${props.metricas.calories_consumed} kcal` : ''}</td>
+        <td>{props.metricas.date.substring(0, 10)}</td>
         <td>
             <Link to={"/metricas/edit/" + props.metricas._id}>Editar</Link> | <a href="#" onClick={(e) => { e.preventDefault(); props.deleteMetricas(props.metricas._id) }}>Deletar</a>
         </td>
@@ -88,6 +89,7 @@ class ListMetricas extends Component {
 							<th className="p-2.5">Pressão Arterial Diastólica</th>
                             <th className="p-2.5">Glicose</th>
                             <th className="p-2.5">Calorias Consumidas</th>
+                            <th className="p-2.5">Dia</th>
                             <th className="p-2.5">Ações</th>
                         </tr>
                     </thead>
